@@ -1,0 +1,222 @@
+$font-family: Helvetica, Arial, sans-serif;
+$text-title-size: 16px;
+$text-footer-size: 12px;
+$text-field-size: 14px;
+
+$text-table-info-color: #9ededa;
+$text-field-color: #1E3744;
+$text-table-background-color: #9ededa;
+$border-table-color: #1e7fb0;
+$border-table-selected-color: #00bd74;
+
+$relation-connector-color: #c7a32e;
+$relation-line-color: #00cebd;
+
+:root {
+   --dbdg-workspace-backgroun: #2d2f30;
+
+   --dbdg-table-icon-color: #{$text-table-info-color};
+   --dbdg-table-selected-color: #{$border-table-selected-color};
+
+   --dbdg-table-title-color: #{$text-table-info-color};
+   --dbdg-table-title-font-family: #{$font-family};
+   --dbdg-table-title-font-size: #{$text-title-size};
+   --dbdg-table-title-font-style: "normal";
+   --dbdg-table-title-font-weight: "normal";
+
+   --dbdg-table-header-color: #{$border-table-color};
+   --dbdg-table-background-color: #{$text-table-background-color};
+   --dbdg-table-footer-color: #{$border-table-color};
+   
+   --dbdg-table-footer-text-color: #{$text-table-info-color};
+   --dbdg-table-footer-text-font-family: #{$font-family};
+   --dbdg-table-footer-text-font-size: #{$text-footer-size};
+   --dbdg-table-footer-text-font-style: "normal";
+   --dbdg-table-footer-text-font-weight: "normal";
+
+   --dbdg-field-text-name-color: #{$text-field-color};
+   --dbdg-field-text-name-font-family: #{$font-family};
+   --dbdg-field-text-name-font-size: #{$text-field-size};
+   --dbdg-field-text-name-font-style: "normal";
+   --dbdg-field-text-name-font-weight: "normal";
+
+   --dbdg-field-text-primary-color: #044D74;
+   --dbdg-field-icon-primary-color: rgb(236, 173, 0);
+   --dbdg-field-text-primary-font-family: #{$font-family};
+   --dbdg-field-text-primary-font-size: #{$text-field-size};
+   --dbdg-field-text-primary-font-style: "normal";
+   --dbdg-field-text-primary-font-weight: "bold";
+
+   --dbdg-field-text-unique-color: #{$text-field-color};
+   --dbdg-field-icon-unique-color: #{$text-field-color};
+   --dbdg-field-text-unique-font-family: #{$font-family};
+   --dbdg-field-text-unique-font-size: #{$text-field-size};
+   --dbdg-field-text-unique-font-style: "normal";
+   --dbdg-field-text-unique-font-weight: "bold";
+
+   --dbdg-field-text-foreign-color: #{$text-field-color};
+   --dbdg-field-icon-foreign-color: #{$text-field-color};
+   --dbdg-field-text-foreign-font-family: #{$font-family};
+   --dbdg-field-text-foreign-font-size: #{$text-field-size};
+   --dbdg-field-text-foreign-font-style: "italic";
+   --dbdg-field-text-foreign-font-weight: "normal";
+
+   --dbdg-field-text-type-color: #{$text-field-color};
+   --dbdg-field-text-type-font-family: #{$font-family};
+   --dbdg-field-text-type-font-size: #{$text-field-size};
+   --dbdg-field-text-type-font-style: "normal";
+   --dbdg-field-text-type-font-weight: "normal";
+
+   --dbdg-relation-connector-color: #{$relation-connector-color};
+   --dbdg-relation-line-color: #{$relation-line-color};
+   --dbdg-relation-line-width: 1.5px;
+   --dbdg-relation-weak-line-width: 2px;
+   --dbdg-relation-weak-line-cap: round;
+   --dbdg-relation-weak-line-join: round;
+   --dbdg-relation-weak-line-dash-array: 4;
+}
+
+svg.dbdg {
+   background-color: var(--dbdg-workspace-backgroun);
+}
+
+svg.dbdg.move {
+   cursor: move;
+}
+
+svg.dbdg.zoom {
+   cursor: ns-resize;
+}
+
+svg.dbdg.zoom-in {
+   cursor: zoom-in;
+}
+
+svg.dbdg.zoom-out {
+   cursor: zoom-out;
+}
+
+/** Table skin & text style **/
+
+svg.dbdg g.selected g.wrapped path.header {
+   fill: var(--dbdg-table-selected-color);
+}
+
+svg.dbdg g.selected g.wrapped path.footer {
+   fill: var(--dbdg-table-selected-color);
+}
+
+svg.dbdg g.selected g.wrapped rect.table-background {
+   stroke-width: 3px;
+   stroke: var(--dbdg-table-selected-color);
+}
+
+svg.dbdg g.wrapped.down {
+   cursor: move;
+}
+
+svg.dbdg g.wrapped path.header {
+   fill: var(--dbdg-table-header-color);
+}
+
+svg.dbdg g.wrapped path.footer {
+   fill: var(--dbdg-table-footer-color);
+}
+
+svg.dbdg g.wrapped path.header:hover, svg.dbdg g.wrapped path.footer:hover {
+   cursor: pointer;
+}
+
+rect.table-background {
+   stroke: none;
+   fill: var(--dbdg-table-background-color);
+}
+
+use.table-icon {
+   fill: var(--dbdg-table-icon-color);
+}
+
+text.title {
+   font: normal var(--dbdg-table-title-font-size) var(--dbdg-table-title-font-family);
+   fill: var(--dbdg-table-title-color);
+}
+
+text.footer {
+   font: normal var(--dbdg-table-footer-text-font-size) var(--dbdg-table-footer-text-font-family);
+   fill: var(--dbdg-table-footer-text-color);
+}
+
+g.wrapped {
+   transform: scale(1, 1);
+   transition: all 0.3s;
+}
+
+g.wrapped use {
+   cursor: pointer;
+}
+
+/** table field style **/
+
+text.field-text-name {
+   font: normal var(--dbdg-field-text-name-font-size) var(--dbdg-field-text-name-font-family);
+   fill: var(--dbdg-field-text-name-color);
+}
+
+text.field-text-type {
+   font: normal var(--dbdg-field-text-type-font-size) var(--dbdg-field-text-type-font-family);
+   fill: var(--dbdg-field-text-type-color);
+}
+
+use.primary {
+   fill: var(--dbdg-field-icon-primary-color);
+}
+
+text.primary {
+   font: var(--dbdg-field-text-primary-font-style) var(--dbdg-field-text-primary-font-weight) var(--dbdg-field-text-name-font-size) var(--dbdg-field-text-name-font-family);
+   fill: var(--dbdg-field-text-primary-color);
+}
+
+use.unique {
+   fill: var(--dbdg-field-icon-unique-color);
+}
+
+text.unique {
+   font: var(--dbdg-field-text-unique-font-style) var(--dbdg-field-text-unique-font-weight) var(--dbdg-field-text-name-font-size) var(--dbdg-field-text-name-font-family);
+   fill: var(--dbdg-field-text-unique-color);
+}
+
+use.foreign {
+   fill: var(--dbdg-field-icon-foreign-color);
+}
+
+text.foreign {
+   font: var(--dbdg-field-text-foreign-font-style) var(--dbdg-field-text-foreign-font-weight) var(--dbdg-field-text-name-font-size) var(--dbdg-field-text-name-font-family);
+   fill: var(--dbdg-field-text-foreign-color);
+}
+
+.cursor-move {
+   cursor: move;
+}
+
+/** relation styles **/
+
+g.relation path.line {
+   stroke: var(--dbdg-relation-line-color);
+   stroke-width: var(--dbdg-relation-line-width);
+   fill: none;
+}
+
+g.relation path.line.weak {
+   stroke-width: var(--dbdg-relation-weak-line-width);
+   stroke-dasharray: var(--dbdg-relation-weak-line-dash-array);
+   stroke-linejoin: var(--dbdg-relation-weak-line-join);
+   stroke-linecap: var(--dbdg-relation-weak-line-cap);
+}
+
+g.relation use.one {
+   fill: var(--dbdg-relation-connector-color);
+}
+
+g.relation use.many {
+   fill: var(--dbdg-relation-connector-color);
+}

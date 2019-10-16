@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <filter id="filter" x="-50%" y="-100%" width="200%" height="300%">
+        <feOffset in="SourceAlpha" result="offA" dy="8" />
+      <feOffset in="SourceAlpha" result="offB" dy="3" />
+      <feOffset in="SourceAlpha" result="offC" dy="5" />
+      <feMorphology in="offA" result="spreadA" operator="dilate" radius="1" />
+      <feMorphology in="offB" result="spreadB" operator="dilate" radius="2" />
+      <feMorphology in="offC" result="spreadC" operator="erode" radius="3" />
+      <feGaussianBlur in="spreadA" result="blurA" stdDeviation="5" /><!--10px 1px-->
+      <feGaussianBlur in="spreadB" result="blurB" stdDeviation="7" /><!--14px 2px-->
+      <feGaussianBlur in="spreadC" result="blurC" stdDeviation="2.5" /><!--5px -3px-->
+      <feFlood flood-opacity="0.14" result="opA" />
+      <feFlood flood-opacity="0.12" result="opB" />
+      <feFlood flood-opacity="0.40" result="opC" />
+      <feComposite in="opA" in2="blurA" result="shA" operator="in" />
+      <feComposite in="opB" in2="blurB" result="shB" operator="in" />
+      <feComposite in="opC" in2="blurC" result="shC" operator="in" />
+      <feMerge>
+        <feMergeNode in="shA" />
+        <feMergeNode in="shB" />
+        <feMergeNode in="shC" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+</svg>

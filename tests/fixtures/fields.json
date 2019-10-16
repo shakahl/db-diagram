@@ -1,0 +1,18 @@
+[{
+    "name": "id",
+    "primary": true,
+    "type": 5
+},{
+    "name": "name",
+    "type": 12
+},{
+    "name": "age",
+    "type": 4
+},{
+    "name": "sex",
+    "type": 13,
+    "typeSize": 1
+},{
+    "name": "birthday",
+    "type": 16
+}]

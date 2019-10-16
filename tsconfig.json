@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "noImplicitAny": false,
+    "inlineSourceMap": false,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist",
+    "declarationDir": "./dist/types",
+    "baseUrl": "./",
+    "downlevelIteration": true,
+    "paths": {
+      "@db-diagram/assets/icons": [
+        "resources/icons"
+      ],
+      "@db-diagram/assets/styles/*": [
+        "resources/styles/*"
+      ],
+      "@db-diagram/tests/*": [
+        "tests/*"
+      ],
+      "@db-diagram/*": [
+        "src/*"
+      ]
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "plugins": [
+      { "name": "typescript-tslint-plugin" }
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "typeRoots": [
+    "src/@types",
+    "node_modules/@types"
+  ]
+}

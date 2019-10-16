@@ -1,0 +1,39 @@
+[
+    {
+        "name": "Table",
+        "engine": "InnoDB",
+        "additional": "Extra!",
+        "fields": [
+            {
+                "name": "name",
+                "type": 12
+            },
+            {
+                "name": "age",
+                "type": 4
+            },
+            {
+                "name": "updatedAt",
+                "type": 16
+            },
+            {
+                "name": "createdAt",
+                "type": 16
+            },
+            {
+                "name": "id",
+                "primary": true,
+                "type": 5
+            },
+            {
+                "name": "sex",
+                "type": 13,
+                "typeSize": 1
+            },
+            {
+                "name": "birthday",
+                "type": 16
+            }
+        ]
+    }
+]
