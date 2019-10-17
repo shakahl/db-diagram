@@ -1,8 +1,7 @@
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
-import { onDomReady } from "@db-diagram/shares/elements";
+import { ControlLocation, defaultDiagramSetting, defaultRelationshipSetting, defaultTableSetting } from "@db-diagram/preference/defaults";
 import { Preference } from "@db-diagram/preference/pref";
-import { defaultTableSetting, defaultRelationshipSetting, ControlLocation, defaultDiagramSetting } from "@db-diagram/preference/defaults";
-
+import { onDomReady } from "@db-diagram/shares/elements";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 
 let inspectDiagram: DiagramFixtures;
 
@@ -12,7 +11,7 @@ beforeAll((done) => {
 });
 
 describe("Preference", () => {
-    
+
     beforeEach(() => {
         inspectDiagram = loadTableFixture("table.json");
         window.localStorage.clear();

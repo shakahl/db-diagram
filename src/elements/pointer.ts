@@ -215,8 +215,8 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
          if (this.native.hasAttribute("transform")) {
             const transform = this.native.getAttribute("transform")!.trim();
             const index = transform.indexOf(",");
-            const x = transform.substring(transform.indexOf("("), index).trim().toNumber();
-            const y = transform.substring(index + 1, transform.indexOf(")")).trim().toNumber();
+            const x = +transform.substring(transform.indexOf("("), index).trim();
+            const y = +transform.substring(index + 1, transform.indexOf(")")).trim();
             this.transformMatrix = this.transformMatrix.translate(x, y);
          }
       }

@@ -53,7 +53,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          fieldOptions: options,
          name: applyAttribute(Base.createElement("text"), {
             alignmentBaseline: "middle",
-            class: styles.fieldTextName.noTypeSelector(),
+            class: styles.fieldTextName,
             dominantBaseline: "middle",
             // 1 space for a line
             x: visual.tableFieldIconWidth + padding.left! + 1,
@@ -61,7 +61,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          } as TextAttribute),
          type: applyAttribute(Base.createElement("text"), {
             alignmentBaseline: "middle",
-            class: styles.fieldTextType.noTypeSelector(),
+            class: styles.fieldTextType,
             dominantBaseline: "middle",
             textAnchor: "end",
             x: (fieldWidth - padding.right!),
@@ -75,15 +75,15 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          if (options.primary) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.primaryKeyIcon);
             size = visual.getIconsElementSize(icons.primaryKeyIcon);
-            clazz = styles.primary.noTypeSelector();
+            clazz = styles.primary;
          } else if (options.unique) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.uniqueKeyIcon);
             size = visual.getIconsElementSize(icons.uniqueKeyIcon);
-            clazz = styles.unique.noTypeSelector();
+            clazz = styles.unique;
          } else if (options.foreign) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.foriegnKeyIcon);
             size = visual.getIconsElementSize(icons.foriegnKeyIcon);
-            clazz = styles.foreign.noTypeSelector();
+            clazz = styles.foreign;
          } else {
             throw new Error("expected error");
          }
@@ -181,7 +181,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const size = parent.preference.table.minimumSize;
 
       this.tableBg = this.wrapped.appendChild(applyAttribute(Base.createElement("rect"), {
-         class: styles.tableBackground.noTypeSelector(),
+         class: styles.tableBackground,
          height: size.height,
          rx: Table.roundCorner,
          ry: Table.roundCorner,
@@ -193,12 +193,12 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const iconHeight = visual.getIconsElementSize(icons.tableIcon).height;
 
       this.header = this.wrapped.appendChild(applyAttribute(Base.createElement("path"), {
-         class: `${styles.header.noTypeSelector()}`,
+         class: `${styles.header}`,
          d: Table.createHeaderPath(size, visual.tableHeaderHeight),
       } as PathAttribute));
 
       this.footer = this.wrapped.appendChild(applyAttribute(Base.createElement("path"), {
-         class: `${styles.footer.noTypeSelector()}`,
+         class: `${styles.footer}`,
          d: Table.createFooterPath(size, visual.tableHeaderHeight, visual.tableFooterHeight),
       } as PathAttribute));
 
@@ -208,13 +208,13 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       let txtTop = (visual.tableHeaderHeight / 2) + 1;
       applyAttribute(this.tableTitle, {
          alignmentBaseline: "middle",
-         class: styles.title.noTypeSelector(),
+         class: styles.title,
          dominantBaseline: "middle",
          transform: `translate(${txtLeft}, ${txtTop})`,
       } as TextAttribute);
 
       this.wrapped.appendChild(applyAttribute(Visualization.createReferencePathIcon(icons.tableIcon), {
-         class: styles.tableIcon.noTypeSelector(),
+         class: styles.tableIcon,
          transform: `translate(${padding.left!}, ${(visual.tableHeaderHeight - iconHeight) / 2})`,
       } as PathAttribute));
 
@@ -225,7 +225,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          txtTop = size.height - (visual.tableFooterHeight / 2) + 1;
          applyAttribute(this.tableEngine, {
             alignmentBaseline: "middle",
-            class: styles.footer.noTypeSelector(),
+            class: styles.footer,
             dominantBaseline: "middle",
             transform: `translate(${txtLeft}, ${txtTop})`,
          } as TextAttribute);

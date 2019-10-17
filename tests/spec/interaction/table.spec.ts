@@ -1,8 +1,8 @@
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
-import { onDomReady, Visualization } from "@db-diagram/shares/elements";
-import { EventSimulation } from "@db-diagram/tests/helpers/events";
 import { Table } from "@db-diagram/elements/table";
 import { Point, Size } from "@db-diagram/elements/utils/types";
+import { onDomReady, Visualization } from "@db-diagram/shares/elements";
+import { EventSimulation } from "@db-diagram/tests/helpers/events";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 import { calculateFinalCoordinate } from "@db-diagram/tests/helpers/svg";
 
 const styles = Visualization.getInstance().getStylesDts();
@@ -10,7 +10,7 @@ let inspectDiagram: DiagramFixtures;
 
 const hasSelected = (table: Table) => {
     return table.native.hasAttribute("class") &&
-        table.native.getAttribute("class")!.includes(styles.selected.noTypeSelector());
+        table.native.getAttribute("class")!.includes(styles.selected);
 };
 
 beforeAll((done) => {
@@ -42,7 +42,9 @@ describe("Table Action", () => {
         expect(hasSelected(table)).toEqual(true);
 
         // check if selection class is removed
-        await EventSimulation.click(inspectDiagram.diagram.native, { x: box.left + box.width + 10, y: box.top + box.height + 10 });
+        await EventSimulation.click(
+            inspectDiagram.diagram.native,
+            { x: box.left + box.width + 10, y: box.top + box.height + 10 });
         expect(hasSelected(table)).toEqual(false);
     });
 
@@ -51,8 +53,8 @@ describe("Table Action", () => {
         expect(table.isDraggable()).toEqual(true);
         const tableBox = table.native.getBBox();
 
-        const verifyPos = async (t: Table, p1: Point, p2: Point, expected: Point, size: Size) => {
-            await EventSimulation.move(t.native, t.native, p1, p2);
+        const verifyPos = async (t: Table, moveP1: Point, moveP2: Point, expected: Point, tbSize: Size) => {
+            await EventSimulation.move(t.native, t.native, moveP1, moveP2);
             const matrix = (t as any).transformMatrix as DOMMatrix;
             expect(matrix).toBeTruthy();
             expect(matrix.e).toEqual(expected.x);
@@ -60,9 +62,9 @@ describe("Table Action", () => {
             expect(matrix.a).toEqual(1);
             expect(matrix.d).toEqual(1);
 
-            const box = t.native.getBBox();
-            expect(box.width).toEqual(size.width);
-            expect(box.height).toEqual(size.height);
+            const tbBox = t.native.getBBox();
+            expect(tbBox.width).toEqual(tbSize.width);
+            expect(tbBox.height).toEqual(tbSize.height);
         };
         const size = { width: tableBox.width, height: tableBox.height };
         await verifyPos(table, { x: 10, y: 10 }, { x: 100, y: 10 }, { x: 90, y: 0 }, size);

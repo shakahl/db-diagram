@@ -6,14 +6,14 @@ export type DataTable = string[][];
 
 /** */
 export interface HeaderField {
-    name: string
-    width?: number
+    name: string;
+    width?: number;
 }
 
 /** */
 export interface TableOptions {
-    maxTableChar: number
-    header: HeaderField[]
+    maxTableChar: number;
+    header: HeaderField[];
 }
 
 export function ConsoleTable(data: DataTable, options: TableOptions) {
@@ -24,7 +24,7 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
         return text + new Array(Math.max(length - txtLen + 1, 0)).join(" ");
     };
 
-    let headerFields = options.header;
+    const headerFields = options.header;
     let allWidth = 0;
 
     const widthCalulcation = (n: number, index: number) => {
@@ -32,14 +32,14 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
         let nWidth = allWidth + cWidth;
         if (nWidth > maxWidth) {
             if (index < headerFields.length - 1) {
-                throw "Not enough room to display all text.";
+                throw new Error("Not enough room to display all text.");
             }
             cWidth -= (nWidth - maxWidth);
             nWidth = maxWidth;
         }
         allWidth = nWidth;
         headerFields[index].width = cWidth;
-    }
+    };
 
     for (let i = 0; i < headerFields.length; i++) {
         if (!headerFields[i].width) {
@@ -54,10 +54,10 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
             txt = txt.substr(0, 3) + "..." + txt.substr(txt.length - width + 8);
         }
         return txt;
-    }
+    };
 
     for (let row = 0; row < data.length; row++) {
-        let line = data[row];
+        const line = data[row];
         allWidth = 0;
         line.forEach((value, column) => {
             const stripTxt = stripAnsi(value);
@@ -74,8 +74,8 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
                         spaceIndex = i;
                     }
                     if (i - initIndex > headerFields[column].width! && spaceIndex !== -1) {
-                        let subIndex = spaceIndex === -1 ? i : spaceIndex;
-                        let txt = truncate(stripTxt.substring(initIndex, subIndex), headerFields[column].width!);
+                        const subIndex = spaceIndex === -1 ? i : spaceIndex;
+                        const txt = truncate(stripTxt.substring(initIndex, subIndex), headerFields[column].width!);
                         if (wrapCount === 0) {
                             line[column] = chalk.red(txt);
                         } else {
@@ -88,7 +88,7 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
                     }
                 }
                 if (initIndex < txtLen) {
-                    let txt = truncate(stripTxt.substring(initIndex), headerFields[column].width!);
+                    const txt = truncate(stripTxt.substring(initIndex), headerFields[column].width!);
                     data.splice(injectIndex, 0, ["", "", "", chalk.red(txt)]);
                     wrapCount += 1;
                 }
@@ -96,27 +96,27 @@ export function ConsoleTable(data: DataTable, options: TableOptions) {
                 row += wrapCount - 1;
             }
         });
-    };
+    }
 
-    let output: string[] = [];
+    const output: string[] = [];
 
     const separator = [""]
-        .concat(headerFields.map(h => new Array(h.width as number + 1).join("-")))
+        .concat(headerFields.map((h) => new Array(h.width as number + 1).join("-")))
         .concat([""])
         .join("-|-");
 
     output.push(separator);
-    output.push([""].concat(headerFields.map(e => pad(e.name, e.width as number)))
+    output.push([""].concat(headerFields.map((e) => pad(e.name, e.width as number)))
         .concat([""])
         .join(" | "));
     output.push(separator);
 
-    data.forEach(row => {
+    data.forEach((row) => {
         output.push([""].concat(headerFields.map((h, i) => pad(row[i], h.width as number)))
             .concat([""])
             .join(" | "));
     });
     output.push(separator);
 
-    return output.map(e => e.replace(/^[ -]/, "").replace(/[ -]$/, "")).join("\n") + "\n";
-};
+    return output.map((e) => e.replace(/^[ -]/, "").replace(/[ -]$/, "")).join("\n") + "\n";
+}

@@ -1,11 +1,11 @@
-import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 import { Diagram } from "@db-diagram/elements/diagram";
 import { Table } from "@db-diagram/elements/table";
-import { TableOptions, FieldOptions } from "@db-diagram/elements/utils/options";
-import { Visualization, onDomReady } from "@db-diagram/shares/elements";
-import { VennType } from "@db-diagram/tests/helpers/svg";
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
+import { FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
 import { FieldCoordinate } from "@db-diagram/elements/utils/types";
+import { onDomReady, Visualization } from "@db-diagram/shares/elements";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
+import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
+import { VennType } from "@db-diagram/tests/helpers/svg";
 
 let htmlFixture: Fixture<HTMLElement>;
 let fields: Fixture<FieldOptions[]>;
@@ -16,16 +16,20 @@ let tableData: DiagramFixtures;
 
 /** */
 const verifyField = (table: Table, childCount: number, index: number, opt: FieldOptions) => {
-    let parent = table.native.querySelector("g.wrapped") as SVGGElement;
-    let allChild = parent.querySelectorAll("g");
+    const parent = table.native.querySelector("g.wrapped") as SVGGElement;
+    const allChild = parent.querySelectorAll("g");
     expect(allChild.length).toEqual(childCount);
 
     expect(allChild[0].querySelectorAll("text").length).toEqual(2);
 
     let clazz = styles.fieldTextName;
-    if (opt.primary) clazz = styles.primary;
-    else if (opt.unique) clazz = styles.unique;
-    else if (opt.foreign) clazz = styles.foreign;
+    if (opt.primary) {
+        clazz = styles.primary;
+    } else if (opt.unique) {
+        clazz = styles.unique;
+    } else if (opt.foreign) {
+        clazz = styles.foreign;
+    }
 
     if (clazz !== styles.fieldTextName) {
         const use = allChild[index].querySelector("use");
@@ -61,14 +65,14 @@ describe("Table", () => {
     });
 
     afterEach(() => {
-        if (htmlFixture.reset) htmlFixture.reset();
-        if (fields.reset) fields.reset();
+        if (htmlFixture.reset) { htmlFixture.reset(); }
+        if (fields.reset) { fields.reset(); }
         diagram.detach();
         tableData.cleanup();
     });
 
     it("Create", () => {
-        let ntbOpt: TableOptions = { name: "Table1" };
+        const ntbOpt: TableOptions = { name: "Table1" };
         const ntable = new Table(diagram, ntbOpt);
         expect(ntable.native).toBeTruthy();
         expect(ntable.name).toEqual(ntbOpt.name);
@@ -121,7 +125,7 @@ describe("Table", () => {
     it("Create field", () => {
         const ntable = new Table(diagram, { name: "New Table" });
         fields.data.forEach((opt, index) => {
-            let fieldIndex = ntable.addField(opt);
+            const fieldIndex = ntable.addField(opt);
             expect(fieldIndex).toEqual(index);
             verifyField(ntable, index + 1, index, opt);
         });
@@ -130,32 +134,32 @@ describe("Table", () => {
     it("Remove field", () => {
         const tbOpt = tableData.tables![0].opt;
         const table = tableData.tables![0].table;
-        const fields = tableData.tables![0].fields;
-        expect(table.removeField(0)).toEqual(fields[0]);
+        const tbFields = tableData.tables![0].fields;
+        expect(table.removeField(0)).toEqual(tbFields[0]);
         const wrapped = table.native.querySelector("g.wrapped");
-        expect(wrapped!.querySelectorAll("g").length).toEqual(fields.length - 1);
+        expect(wrapped!.querySelectorAll("g").length).toEqual(tbFields.length - 1);
 
         const tbmeta = table.metadata();
         expect(tbmeta.name).toEqual(tbOpt.name);
         expect(tbmeta.engine).toEqual(tbOpt.engine);
         expect(tbmeta.additional).toEqual(tbOpt.additional);
         expect(tbmeta.fields).toBeTruthy();
-        expect(tbmeta.fields!.length).toEqual(fields.length - 1);
+        expect(tbmeta.fields!.length).toEqual(tbFields.length - 1);
         // verify the exist field.
-        fields.splice(0, 1);
-        fields.forEach((opt, index) => {
-            verifyField(table, fields.length, index, opt);
+        tbFields.splice(0, 1);
+        tbFields.forEach((opt, index) => {
+            verifyField(table, tbFields.length, index, opt);
         });
     });
 
     it("Field Meta", () => {
         const table = tableData.tables![0].table;
-        const fields = tableData.tables![0].fields;
-        fields.forEach((field, index) => {
+        const tbFields = tableData.tables![0].fields;
+        tbFields.forEach((field, index) => {
             expect(table.field(index)).toEqual(field);
             expect(table.fieldIndex(field)).toEqual(index);
         });
-        expect(table.primaryField()).toEqual(fields[0]);
+        expect(table.primaryField()).toEqual(tbFields[0]);
     });
 
     it("Field Coordination", () => {
@@ -165,7 +169,7 @@ describe("Table", () => {
         const tbBox = table.native.getBoundingClientRect();
         const svgBox = tableData.diagram.native.getBoundingClientRect();
         const verifyCoordinate = (fieldLoc: FieldCoordinate, tbfield: Element,
-            pBox: DOMRect | ClientRect, diaBox: DOMRect | ClientRect) => {
+                                  pBox: DOMRect | ClientRect, diaBox: DOMRect | ClientRect) => {
             const box = tbfield.getBoundingClientRect();
             const yt = box.top - pBox.top;
             const yb = yt + box.height;

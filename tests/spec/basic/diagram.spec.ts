@@ -1,9 +1,9 @@
 import { Diagram } from "@db-diagram/elements/diagram";
-import { loadAttributeFrom, loadAttributeFixture } from "@db-diagram/tests/helpers/helper";
-import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
-import { TableOptions } from "@db-diagram/elements/utils/options";
 import { Table } from "@db-diagram/elements/table";
+import { TableOptions } from "@db-diagram/elements/utils/options";
 import { onDomReady } from "@db-diagram/shares/elements";
+import { loadAttributeFixture, loadAttributeFrom } from "@db-diagram/tests/helpers/helper";
+import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 
 let htmlFixture: Fixture<HTMLElement>;
 
@@ -19,11 +19,11 @@ describe("Diagram", () => {
    });
 
    afterEach(() => {
-      if (htmlFixture.reset) htmlFixture.reset();
+      if (htmlFixture.reset) { htmlFixture.reset(); }
    });
 
    it("create", () => {
-      let diagram = new Diagram();
+      const diagram = new Diagram();
       diagram.attach(document.body);
       expect(diagram).toBeTruthy();
       expect(diagram.native).toBeTruthy();
@@ -39,8 +39,8 @@ describe("Diagram", () => {
    });
 
    it("create with id", () => {
-      let id = htmlFixture.data.getAttribute("id")!;
-      let diagram = new Diagram({ id: id });
+      const id = htmlFixture.data.getAttribute("id")!;
+      const diagram = new Diagram({ id });
       diagram.attach(`#${id}`);
       expect(diagram).toBeTruthy();
       expect(diagram.native).toBeTruthy();
@@ -57,26 +57,26 @@ describe("Diagram", () => {
    });
 
    it("attach", () => {
-      let diagram1 = new Diagram();
+      const diagram1 = new Diagram();
       diagram1.attach(`#${htmlFixture.data.getAttribute("id")!}`);
       expect(htmlFixture.data.childElementCount).toBe(1);
-      expect(htmlFixture.data.children[0].tagName).toBe('svg');
+      expect(htmlFixture.data.children[0].tagName).toBe("svg");
       expect(htmlFixture.data.children[0]).toBe(diagram1.native);
       diagram1.detach();
 
-      let diagram2 = new Diagram();
+      const diagram2 = new Diagram();
       diagram2.attach(htmlFixture.data.getAttribute("id")!);
       expect(htmlFixture.data.childElementCount).toBe(1);
-      expect(htmlFixture.data.children[0].tagName).toBe('svg');
+      expect(htmlFixture.data.children[0].tagName).toBe("svg");
       expect(htmlFixture.data.children[0]).toBe(diagram2.native);
       diagram2.detach();
    });
 
    it("verify attribute", () => {
-      let opt = loadAttributeFixture("svg.attr.json");
-      let diagram = new Diagram(opt);
+      const opt = loadAttributeFixture("svg.attr.json");
+      const diagram = new Diagram(opt);
       diagram.attach(htmlFixture.data);
-      let attrs = loadAttributeFrom(diagram.native);
+      const attrs = loadAttributeFrom(diagram.native);
       // remove function toString as we only care about properties
       delete opt.viewBox.toString;
       delete attrs.viewBox!.toString;
@@ -85,38 +85,38 @@ describe("Diagram", () => {
    });
 
    it("create table", () => {
-      let opt = loadAttributeFixture("svg.attr.json");
-      let diagram = new Diagram(opt);
+      const opt = loadAttributeFixture("svg.attr.json");
+      const diagram = new Diagram(opt);
       diagram.attach(htmlFixture.data);
 
-      let verify = (table: Table, opt: TableOptions, childCount: number, index: number) => {
+      const verify = (table: Table, tbOpt: TableOptions, childCount: number, index: number) => {
          expect(table).toBeTruthy();
          expect(table.native).toBeTruthy();
          expect(table.native).toBeTruthy();
          expect(diagram.holder.childElementCount).toEqual(childCount);
          expect(diagram.holder.children[index] instanceof SVGGElement).toBeTruthy();
          expect(table.native).toBe(diagram.holder.children[index] as SVGGElement);
-   
-         expect(diagram.table(opt)).toBeTruthy();
-         expect(diagram.indexOf(table)).toEqual(index);
-      }
 
-      let tbOpt1: TableOptions = { name: "Table1" };
-      let tb1 = diagram.table(tbOpt1);
+         expect(diagram.table(tbOpt)).toBeTruthy();
+         expect(diagram.indexOf(table)).toEqual(index);
+      };
+
+      const tbOpt1: TableOptions = { name: "Table1" };
+      const tb1 = diagram.table(tbOpt1);
       verify(tb1!, tbOpt1, 1, 0);
 
-      let tbOpt2: TableOptions = { name: "Table2" };
-      let tb2 = diagram.table(tbOpt2);
+      const tbOpt2: TableOptions = { name: "Table2" };
+      const tb2 = diagram.table(tbOpt2);
       verify(tb2!, tbOpt2, 2, 1);
 
-      let tbOpt3: TableOptions = { name: "Table3" };
-      let tb3 = diagram.table(tbOpt3);
+      const tbOpt3: TableOptions = { name: "Table3" };
+      const tb3 = diagram.table(tbOpt3);
       verify(tb3!, tbOpt3, 3, 2);
 
       expect(diagram.allTables()).toBeTruthy();
       expect(diagram.tableCount).toEqual(3);
 
-      let tb1RM = diagram.table(tbOpt1, true);
+      const tb1RM = diagram.table(tbOpt1, true);
       expect(tb1RM).toEqual(tb1);
       expect(diagram.indexOf(tb1!)).toEqual(-1);
       expect(diagram.tableCount).toEqual(2);

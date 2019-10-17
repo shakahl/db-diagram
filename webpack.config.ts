@@ -1,41 +1,37 @@
-import webpack from "webpack";
+import { PluginFactory } from "@krobkrong/resources-utilities";
 import path from "path";
 import TerserPlugin from "terser-webpack-plugin";
-import { PluginFactory } from "@krobkrong/resources-utilities";
+import webpack from "webpack";
 
-let pluginSvg = PluginFactory.getPlugins({
+const pluginSvg = PluginFactory.getPlugins({
+   cleanSvgPresentationAttr: true,
    glob: `${__dirname}/resources/icons/*.svg`,
    merge: [`${__dirname}/resources/icons/`],
-   output: `${__dirname}/src/@types`,
    mergeFilenameAsId: true,
-   cleanSvgPresentationAttr: true
+   output: `${__dirname}/src/@types`,
 });
 
-let pluginCss = PluginFactory.getPlugins({
+const pluginCss = PluginFactory.getPlugins({
+   excludeSelectorSymbol: true,
    glob: `${__dirname}/resources/styles/*.scss`,
-   output: `${__dirname}/src/@types`
+   output: `${__dirname}/src/@types`,
 });
 
 const config: webpack.Configuration = {
-   mode: "development",
-   entry: {
-      main: "./src/index.ts"
-   },
-   output: {
-      path: path.resolve(__dirname, "dist"),
-      library: "DBDiagram"
-   },
-   resolve: {
-      extensions: [".ts", ".js", ".css", ".scss", ".svg"],
-      alias: {
-         "@db-diagram/assets/icons": path.resolve(__dirname, `resources/icons`),
-         "@db-diagram/assets/styles": path.resolve(__dirname, `resources/styles`),
-         "@db-diagram/tests": path.resolve(__dirname, "tests"),
-         "@db-diagram": path.resolve(__dirname, "src")
-      },
-      plugins: [pluginSvg, pluginCss]
+   devServer: {
+      compress: true,
+      contentBase: [
+         path.join(__dirname, "./demo"),
+         path.join(__dirname, "./"),
+      ],
+      host: "0.0.0.0",
+      port: 8080,
    },
    devtool: "inline-source-map",
+   entry: {
+      main: "./src/index.ts",
+   },
+   mode: "development",
    module: {
       rules: [
          {
@@ -43,30 +39,36 @@ const config: webpack.Configuration = {
             use: {
                loader: "ts-loader",
                options: {
-                  configFile: "tsconfig.json"
-               }
+                  configFile: "tsconfig.json",
+               },
             },
-         }
-      ]
+         },
+      ],
    },
    optimization: {
       minimizer: [
          new TerserPlugin({
+            sourceMap: true,
             test: /\.ts(\?.*)?$/i,
-            sourceMap: true
          }),
       ],
    },
+   output: {
+      library: "DBDiagram",
+      path: path.resolve(__dirname, "dist"),
+   },
    plugins: [pluginSvg, pluginCss],
-   devServer: {
-      contentBase: [
-         path.join(__dirname, "./demo"),
-         path.join(__dirname, "./"),
-      ],
-      compress: true,
-      port: 8080,
-      host: "0.0.0.0"
-   }
+   resolve: {
+      alias: {
+         "@db-diagram/assets/icons": path.resolve(__dirname, `resources/icons`),
+         "@db-diagram/assets/styles": path.resolve(__dirname, `resources/styles`),
+         "@db-diagram/tests": path.resolve(__dirname, "tests"),
+         // tslint:disable-next-line: object-literal-sort-keys
+         "@db-diagram": path.resolve(__dirname, "src"),
+      },
+      extensions: [".ts", ".js", ".css", ".scss", ".svg"],
+      plugins: [pluginSvg, pluginCss],
+   },
 };
 
 export default config;

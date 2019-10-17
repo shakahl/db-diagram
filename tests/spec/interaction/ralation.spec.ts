@@ -1,12 +1,9 @@
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
-import { onDomReady, Visualization } from "@db-diagram/shares/elements";
-import { RelationshipOptions } from "@db-diagram/elements/utils/options";
 import { Relation } from "@db-diagram/elements/relation";
 import { Table } from "@db-diagram/elements/table";
+import { RelationshipOptions } from "@db-diagram/elements/utils/options";
+import { onDomReady, Visualization } from "@db-diagram/shares/elements";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 import { getElementCoordinate } from "@db-diagram/tests/helpers/svg";
-import { many } from "@db-diagram/assets/icons";
-
-
 
 const shareUI = Visualization.getInstance();
 const icons = shareUI.getIconsDts();
@@ -19,7 +16,7 @@ enum Side {
     MID_MANY_BOTTOM_LEFT = 3,
     MID_MANY_BOTTOM_RIGHT = 4,
     OVERLAP_TOP = 5,
-    OVERLAP_BOTTOM = 6
+    OVERLAP_BOTTOM = 6,
 }
 
 const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table, side: Side) => {
@@ -60,8 +57,8 @@ const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table
 
         case Side.OVERLAP_TOP:
         case Side.OVERLAP_BOTTOM:
-            let oneBox = getElementCoordinate(inspectDiagram.diagram, icons.one, relation.native);
-            let manyBox = getElementCoordinate(inspectDiagram.diagram, icons.many, relation.native);
+            const oneBox = getElementCoordinate(inspectDiagram.diagram, icons.one, relation.native);
+            const manyBox = getElementCoordinate(inspectDiagram.diagram, icons.many, relation.native);
             expect(oneBox).toBeTruthy();
             expect(manyBox).toBeTruthy();
 
@@ -76,7 +73,7 @@ const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table
             expect(height).toEqual(relation.native.getBBox().height);
             break;
     }
-}
+};
 
 beforeAll((done) => {
     onDomReady(done);
@@ -94,13 +91,13 @@ describe("Relation Action", () => {
 
     it("Coordinate", () => {
         const opts: RelationshipOptions[] = [{
+            foreignTable: inspectDiagram.tables![1].table,
+            line: true,
             primaryTable: inspectDiagram.tables![0].table,
-            foreignTable: inspectDiagram.tables![1].table,
-            line: true
         }, {
-            primaryTable: inspectDiagram.tables![2].table,
             foreignTable: inspectDiagram.tables![1].table,
-            line: false
+            line: false,
+            primaryTable: inspectDiagram.tables![2].table,
         }];
 
         opts.forEach((opt) => {

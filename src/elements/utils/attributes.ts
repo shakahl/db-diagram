@@ -177,10 +177,10 @@ export function ParseViewBox(svg: SVGSVGElement | string): ViewBox | undefined {
       const regex = /(-?\d+)[\s|,](-?\d+)[\s|,](-?\d+)[\s|,](-?\d+)/;
       const matched = viewBoxStr.match(regex);
       return ApplyViewBox({
-         height: matched![4].toNumber(),
-         minX: matched![1].toNumber(),
-         minY: matched![2].toNumber(),
-         width: matched![3].toNumber(),
+         height: +matched![4],
+         minX: +matched![1],
+         minY: +matched![2],
+         width: +matched![3],
       });
    } else {
       return undefined;

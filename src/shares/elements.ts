@@ -1,3 +1,4 @@
+import { noQuote } from "@db-diagram/@extensions/strings";
 import icons from "@db-diagram/assets/icons";
 import styles from "@db-diagram/assets/styles/style-dark.scss";
 import { Base } from "@db-diagram/elements/base";
@@ -255,8 +256,8 @@ export class Visualization {
         const textSize = this.measureText(tableName, {
             fontFamily: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontFamily),
             fontSize: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontSize),
-            fontStyle: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontStyle).noQuote(),
-            fontWeight: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontWeight).noQuote(),
+            fontStyle: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontStyle)),
+            fontWeight: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableTitleFontWeight)),
         });
         if (textOnly) { return new Box(textSize); }
         return this.getIconsElementSize(icons.tableIcon).editable()
@@ -282,8 +283,8 @@ export class Visualization {
         return this.measureText(text, {
             fontFamily: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontFamily),
             fontSize: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontSize),
-            fontStyle: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontStyle.noQuote()),
-            fontWeight: this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontWeight).noQuote(),
+            fontStyle: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontStyle)),
+            fontWeight: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgTableFooterTextFontWeight)),
         });
     }
 
@@ -328,8 +329,8 @@ export class Visualization {
         return this.measureText(options.typeRaw!, {
             fontFamily: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontFamily),
             fontSize: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontSize),
-            fontStyle: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontStyle).noQuote(),
-            fontWeight: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontWeight).noQuote(),
+            fontStyle: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontStyle)),
+            fontWeight: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontWeight)),
         });
     }
 

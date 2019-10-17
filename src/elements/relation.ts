@@ -30,7 +30,7 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
       this.options = options;
       this.options.line = this.options.line || parent.preference.relationship.useStraightLine;
 
-      applyAttribute(this.native, { class: styles.relation.noTypeSelector() });
+      applyAttribute(this.native, { class: styles.relation });
 
       if (options.foreignField === undefined) {
          try {
@@ -54,15 +54,15 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
       this.options.foreignTable.foriegnRelation(this, this.foriegnField);
 
       this.path = Base.createElement("path");
-      let clazz = styles.line.noTypeSelector();
-      if (this.options.weak) { clazz += ` ${styles.weak.noTypeSelector()}`; }
+      let clazz = styles.line;
+      if (this.options.weak) { clazz += ` ${styles.weak}`; }
       this.native.appendChild(applyAttribute(this.path, { class: clazz }));
 
       this.many = Visualization.createReferencePathIcon(icons.many);
       this.pone = Visualization.createReferencePathIcon(icons.one);
 
-      this.native.appendChild(applyAttribute(this.many, { class: styles.many.noTypeSelector() }));
-      this.native.appendChild(applyAttribute(this.pone, { class: styles.one.noTypeSelector() }));
+      this.native.appendChild(applyAttribute(this.many, { class: styles.many }));
+      this.native.appendChild(applyAttribute(this.pone, { class: styles.one }));
 
       this.options.foreignTable.front();
       this.options.primaryTable.front();

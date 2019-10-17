@@ -1,10 +1,9 @@
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
-import { onDomReady } from "@db-diagram/shares/elements";
 import { Pointer } from "@db-diagram/elements/pointer";
-import { EventSimulation } from "@db-diagram/tests/helpers/events";
 import { Point, Size } from "@db-diagram/elements/utils/types";
+import { onDomReady } from "@db-diagram/shares/elements";
+import { EventSimulation } from "@db-diagram/tests/helpers/events";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 import { calculateBound } from "@db-diagram/tests/helpers/svg";
-
 
 beforeAll((done) => {
     onDomReady(done);
@@ -70,7 +69,7 @@ describe("Diagram Action", () => {
     it("Pan", async () => {
         const diaBox = inspectDiagram.diagram.holder.getBBox();
         expect(inspectDiagram.diagram.isPannable()).toBeTruthy();
-        const verifyPos = async (p1: Point, p2: Point, expected: Point, size: Size) => {
+        const verifyPos = async (p1: Point, p2: Point, expected: Point, diaSize: Size) => {
             await EventSimulation.move(inspectDiagram.diagram.native, window, p1, p2);
             const matrix = (inspectDiagram.diagram as any).transformMatrix as DOMMatrix;
             expect(matrix).toBeTruthy();
@@ -80,8 +79,8 @@ describe("Diagram Action", () => {
             expect(matrix.d).toEqual(1);
 
             const box = inspectDiagram.diagram.holder.getBBox();
-            expect(box.width).toEqual(size.width);
-            expect(box.height).toEqual(size.height);
+            expect(box.width).toEqual(diaSize.width);
+            expect(box.height).toEqual(diaSize.height);
         };
         const size = { width: diaBox.width, height: diaBox.height };
         await verifyPos({ x: 0, y: 0 }, { x: -100, y: 0 }, { x: -100, y: 0 }, size);
@@ -114,7 +113,7 @@ describe("Diagram Action", () => {
         expect(inspectDiagram.diagram.setZoom).toHaveBeenCalledWith(2);
         verifyZoom(2, calculateBound(inspectDiagram.diagram.native, diaBox, 2));
 
-        for (let v of [1.5, 2.2, 4, 1.2]) {
+        for (const v of [1.5, 2.2, 4, 1.2]) {
             const zoomPoint = { x: diaBox.left + Math.random() * 20, y: diaBox.top + Math.random() * 40 };
             inspectDiagram.diagram.setZoom(v, zoomPoint);
             expect(inspectDiagram.diagram.setZoom).toHaveBeenCalled();
@@ -134,7 +133,7 @@ describe("Diagram Action", () => {
         };
 
         let prevZoom = 1;
-        for (let v of [1.5, 2.1, 1.7, 3.2, 4.4, 1]) {
+        for (const v of [1.5, 2.1, 1.7, 3.2, 4.4, 1]) {
             const zoomPoint = { x: diaBox.x + Math.random() * 20, y: diaBox.y + Math.random() * 40 };
             verifyZoom(prevZoom, v, calculateBound(inspectDiagram.diagram.native, diaBox, v, zoomPoint), zoomPoint);
             prevZoom = v;

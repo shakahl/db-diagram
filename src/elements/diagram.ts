@@ -327,14 +327,14 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
     * Call when user mouse click is down or touch down.
     */
    protected onPointerDown(): void {
-      this.native.classList.add(styles.move.noTypeSelector());
+      this.native.classList.add(styles.move);
    }
 
    /**
     * Call when user mouse click is up or touch up.
     */
    protected onPointerUp(): void {
-      this.native.classList.remove(styles.move.noTypeSelector());
+      this.native.classList.remove(styles.move);
    }
 
    /**
@@ -357,7 +357,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    protected onPanZoomStart(evt: CustomEvent) {
       this.originalTransformMatrix = this.cloneTransformMatrix(this.transformMatrix!);
       this.originalState = this.toSvgCoordinate(evt).matrixTransform(this.transformMatrix!.inverse());
-      this.native.classList.add(styles.zoom.noTypeSelector());
+      this.native.classList.add(styles.zoom);
    }
 
    /**
@@ -367,9 +367,9 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       this.originalState = undefined;
       this.originalTransformMatrix = undefined;
       this.lastWheelEventTime = 0;
-      this.native.classList.remove(styles.zoom.noTypeSelector());
-      this.native.classList.remove(styles.zoomIn.noTypeSelector());
-      this.native.classList.remove(styles.zoomOut.noTypeSelector());
+      this.native.classList.remove(styles.zoom);
+      this.native.classList.remove(styles.zoomIn);
+      this.native.classList.remove(styles.zoomOut);
    }
 
    /**
@@ -389,9 +389,9 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       const zoomAmount = Math.pow(1 + 0.1, -1 * delta);
 
       if (zoomAmount > 1) {
-         this.native.classList.add(styles.zoomIn.noTypeSelector());
+         this.native.classList.add(styles.zoomIn);
       } else if (zoomAmount < 1) {
-         this.native.classList.add(styles.zoomOut.noTypeSelector());
+         this.native.classList.add(styles.zoomOut);
       }
 
       this.setZoomAmount(zoomAmount, { x: wd.clientX, y: wd.clientY });

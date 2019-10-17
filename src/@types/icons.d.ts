@@ -3,11 +3,11 @@
 // ************************************************************************
 
 declare module "@db-diagram/assets/icons" {
-  export const filters: string
-  export const foriegnKeyIcon: string
-  export const many: string
-  export const one: string
-  export const primaryKeyIcon: string
-  export const tableIcon: string
-  export const uniqueKeyIcon: string
+  export const filters: string;
+  export const foriegnKeyIcon: string;
+  export const many: string;
+  export const one: string;
+  export const primaryKeyIcon: string;
+  export const tableIcon: string;
+  export const uniqueKeyIcon: string;
 }

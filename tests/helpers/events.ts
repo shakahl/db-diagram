@@ -1,28 +1,14 @@
 import { Point } from "@db-diagram/elements/utils/types";
 
-
 interface EventCallback {
-    progress: (fragtion: number) => boolean
-    done: () => void
+    progress: (fragtion: number) => boolean;
+    done: () => void;
 }
 
 /**
- * 
+ *
  */
 export class EventSimulation {
-
-    private static firePointerEvent(ele: SVGElement | Window,
-        name: string, x: number, y: number,
-        additionEvent: PointerEventInit = {}): PointerEvent {
-        const evt = new PointerEvent(name, Object.assign(additionEvent, {
-            clientX: x,
-            clientY: y,
-            bubbles: true,
-            cancelable: true
-        }));
-        ele.dispatchEvent(evt);
-        return evt;
-    }
 
     public static click(ele: SVGElement | Window, p: Point): Promise<boolean> {
         return new Promise((resolve) => {
@@ -40,14 +26,14 @@ export class EventSimulation {
             const dy = p2.y - p1.y;
             this.firePointerEvent(ele, "pointerdown", p1.x, p1.y);
             const es = new EventSimulation(100, {
+                done: () => {
+                    this.firePointerEvent(ele, "pointerup", p2.x, p2.y);
+                    resolve(true);
+                },
                 progress: (frag: number) => {
                     this.firePointerEvent(moveEle, "pointermove", p1.x + (dx * frag), p1.y + (dy * frag));
                     return false;
                 },
-                done: () => {
-                    this.firePointerEvent(ele, "pointerup", p2.x, p2.y);
-                    resolve(true);
-                }
             });
             es.start();
         });
@@ -62,18 +48,34 @@ export class EventSimulation {
                 const wheelEvt = new WheelEvent("wheel", {
                     bubbles: true,
                     cancelable: true,
-                    ctrlKey: true,
                     clientX: point.x,
                     clientY: point.y,
+                    ctrlKey: true,
                     deltaX: 0.0,
-                    deltaY: delta
+                    deltaY: delta,
                 });
                 count += 1;
-                if (count < numOfEvt) ele.dispatchEvent(wheelEvt);
-                else resolve(true);
-            }
+                if (count < numOfEvt) {
+                    ele.dispatchEvent(wheelEvt);
+                } else {
+                    resolve(true);
+                }
+            };
             setTimeout(firstEvent, 10);
         });
+    }
+
+    private static firePointerEvent(ele: SVGElement | Window,
+                                    name: string, x: number, y: number,
+                                    additionEvent: PointerEventInit = {}): PointerEvent {
+        const evt = new PointerEvent(name, Object.assign(additionEvent, {
+            bubbles: true,
+            cancelable: true,
+            clientX: x,
+            clientY: y,
+        }));
+        ele.dispatchEvent(evt);
+        return evt;
     }
 
     private startTime?: number;
@@ -90,7 +92,7 @@ export class EventSimulation {
     }
 
     private step(t: number) {
-        if (!this.startTime) this.startTime = t;
+        if (!this.startTime) { this.startTime = t; }
         const spent = t - this.startTime!;
         if (this.callback.progress(Math.min(spent / this.duration, 1)) || spent < this.duration) {
             window.requestAnimationFrame(this.step.bind(this));
