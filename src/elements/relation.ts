@@ -120,7 +120,9 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
             p1 = fL.right;
             p2 = pL.left;
             applyAttribute(this.pone, { transform: `translate(${p2.x - oneSize.width}, ${p2.y - oneMidY})` });
-            applyAttribute(this.many, { transform: `translate(${p1.x}, ${p1.y - manyMidY}) rotate(180, ${manyMidX}, ${manyMidY})` });
+            applyAttribute(this.many, {
+               transform: `translate(${p1.x}, ${p1.y - manyMidY}) rotate(180, ${manyMidX}, ${manyMidY})`,
+            });
          }
 
          const str = this.options.line ?
@@ -137,7 +139,9 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
             p2 = fL.right;
             right = true;
             applyAttribute(this.pone, { transform: `translate(${p1.x}, ${p1.y - oneMidY})` });
-            applyAttribute(this.many, { transform: `translate(${p2.x}, ${p2.y - manyMidY}) rotate(180, ${manyMidX}, ${manyMidY})` });
+            applyAttribute(this.many, { transform:
+               `translate(${p2.x}, ${p2.y - manyMidY}) rotate(180, ${manyMidX}, ${manyMidY})`,
+            });
          } else {
             p1 = pL.left;
             p2 = fL.left;

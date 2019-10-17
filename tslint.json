@@ -3,10 +3,15 @@
     "extends": [
         "tslint:recommended"
     ],
-    "jsRules": {},
+    "jsRules": {
+        "max-line-length": {
+            "options": [
+                120
+            ]
+        }
+    },
     "rules": {
-        "interface-name": false,
-        "max-len": ["error", { "code": 120 }]
+        "interface-name": false
     },
     "rulesDirectory": []
 }
