@@ -189,10 +189,10 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
    private axisY: number;
 
    // pointer properties
-   private pointerState: number = 0;
+   private pointerState = 0;
    private pEvt?: PointerEvt;
-   private clickRegistered: boolean = false;
-   private dragRegistered: boolean = false;
+   private clickRegistered = false;
+   private dragRegistered = false;
 
    constructor(element: T, attr?: A) {
       super(element, attr);

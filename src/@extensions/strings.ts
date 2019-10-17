@@ -4,12 +4,12 @@
  * @param str string to remove double quote.
  */
 export function noQuote(str: string): string {
-    str = str.trim();
-    if (str.startsWith("\"")) {
-        str = str.substr(1);
+    let txt = str.trim();
+    if (txt.startsWith("\"")) {
+        txt = str.substr(1);
     }
-    if (str.endsWith("\"")) {
-        str = str.substr(0, str.length - 1);
+    if (txt.endsWith("\"")) {
+        txt = str.substr(0, txt.length - 1);
     }
-    return str;
+    return txt;
 }

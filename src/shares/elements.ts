@@ -39,10 +39,10 @@ type ElementCallback = <T extends SVGElement>(ele: T) => void;
  * Padding data
  */
 export interface Padding {
-    left?: number;
-    right?: number;
-    top?: number;
-    bottom?: number;
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
 }
 
 /**

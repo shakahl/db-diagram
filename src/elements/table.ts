@@ -46,7 +46,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const nameBox = visual.getTableTextFieldVariableSize(options);
       const typeBox = visual.getTableTextFieldTypeSize(options);
       const fieldWidth = Math.max(table.size.width, visual.tableFieldIconWidth +
-         nameBox.width + typeBox.width + padding.left! + padding.right! + Visualization.FieldNameTypeSpacing);
+         nameBox.width + typeBox.width + padding.left + padding.right + Visualization.FieldNameTypeSpacing);
 
       const fieldUi = {
          fieldGroup: Base.createElement("g"),
@@ -56,7 +56,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
             class: styles.fieldTextName,
             dominantBaseline: "middle",
             // 1 space for a line
-            x: visual.tableFieldIconWidth + padding.left! + 1,
+            x: visual.tableFieldIconWidth + padding.left + 1,
             y: half,
          } as TextAttribute),
          type: applyAttribute(Base.createElement("text"), {
@@ -64,7 +64,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
             class: styles.fieldTextType,
             dominantBaseline: "middle",
             textAnchor: "end",
-            x: (fieldWidth - padding.right!),
+            x: (fieldWidth - padding.right),
             y: half,
          } as TextAttribute),
       } as FieldUI;
@@ -103,9 +103,9 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       }
 
       const totalFieldHeight = (rowHeight * (table.fieldsUi.length));
-      const rowY = visual.tableHeaderHeight + totalFieldHeight + padding.top!;
+      const rowY = visual.tableHeaderHeight + totalFieldHeight + padding.top;
 
-      table.onSizeChange(fieldWidth, rowY + visual.tableFooterHeight + visual.tableFieldHeight + padding.bottom!);
+      table.onSizeChange(fieldWidth, rowY + visual.tableFooterHeight + visual.tableFieldHeight + padding.bottom);
       applyAttribute(fieldUi.fieldGroup, { transform: `translate(0,${rowY})` });
 
       return fieldUi;
@@ -204,7 +204,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       this.tableTitle = this.wrapped.appendChild(Base.createElement("text"));
       this.tableTitle.textContent = options.name;
-      let txtLeft = (2 * padding.left!) + visual.getIconsElementSize(icons.tableIcon).width;
+      let txtLeft = (2 * padding.left) + visual.getIconsElementSize(icons.tableIcon).width;
       let txtTop = (visual.tableHeaderHeight / 2) + 1;
       applyAttribute(this.tableTitle, {
          alignmentBaseline: "middle",
@@ -215,13 +215,13 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       this.wrapped.appendChild(applyAttribute(Visualization.createReferencePathIcon(icons.tableIcon), {
          class: styles.tableIcon,
-         transform: `translate(${padding.left!}, ${(visual.tableHeaderHeight - iconHeight) / 2})`,
+         transform: `translate(${padding.left}, ${(visual.tableHeaderHeight - iconHeight) / 2})`,
       } as PathAttribute));
 
       if (options.engine) {
          this.tableEngine = this.wrapped.appendChild(Base.createElement("text"));
          this.tableEngine.textContent = options.engine!;
-         txtLeft = padding.left!;
+         txtLeft = padding.left;
          txtTop = size.height - (visual.tableFooterHeight / 2) + 1;
          applyAttribute(this.tableEngine, {
             alignmentBaseline: "middle",
@@ -379,7 +379,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       const visual = Visualization.getInstance();
 
-      const top = Visualization.TableFieldPadding.top!;
+      const top = Visualization.TableFieldPadding.top;
       const y = visual.tableHeaderHeight + (index * visual.tableFieldHeight) +
          (visual.tableFieldHeight / 2) + (2 * top) + this.y(true);
 
@@ -427,7 +427,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
          const size = this.parent!.preference.table.minimumSize;
          const space = 6;
-         const rowHeight = Math.max(12, fieldUi.type.getBBox().height, fieldUi.name.getBBox().height);
+         const rowHeight = Math.max(fieldUi.type.getBBox().height, fieldUi.name.getBBox().height);
          let mW = 0;
          this.fieldsUi.forEach((fUI) => {
             const typeWidth = fUI.type.getBBox().width;
@@ -554,7 +554,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          updateHeader = true;
          // update exist field type position
          this.fieldsUi.forEach((fieldUi) => {
-            applyAttribute(fieldUi.type, { x: width - padding.left! - padding.right! });
+            applyAttribute(fieldUi.type, { x: width - padding.left - padding.right });
          });
       }
 
