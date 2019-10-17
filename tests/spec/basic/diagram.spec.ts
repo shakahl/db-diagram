@@ -1,9 +1,10 @@
+import { loadAttributeFixture, loadAttributeFrom } from "@db-diagram/tests/helpers/helper";
+import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
+
 import { Diagram } from "@db-diagram/elements/diagram";
 import { Table } from "@db-diagram/elements/table";
 import { TableOptions } from "@db-diagram/elements/utils/options";
 import { onDomReady } from "@db-diagram/shares/elements";
-import { loadAttributeFixture, loadAttributeFrom } from "@db-diagram/tests/helpers/helper";
-import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 
 let htmlFixture: Fixture<HTMLElement>;
 

@@ -1,11 +1,12 @@
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
+import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
+import { VennType } from "@db-diagram/tests/helpers/svg";
+
 import { Diagram } from "@db-diagram/elements/diagram";
 import { Table } from "@db-diagram/elements/table";
 import { FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
 import { FieldCoordinate } from "@db-diagram/elements/utils/types";
 import { onDomReady, Visualization } from "@db-diagram/shares/elements";
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
-import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
-import { VennType } from "@db-diagram/tests/helpers/svg";
 
 let htmlFixture: Fixture<HTMLElement>;
 let fields: Fixture<FieldOptions[]>;
@@ -37,11 +38,11 @@ const verifyField = (table: Table, childCount: number, index: number, opt: Field
         expect(use!.getAttribute("href")).toEqual(`#${icons.primaryKeyIcon}`);
     }
 
-    const fieldName = allChild[index].querySelector(`text${clazz}`);
+    const fieldName = allChild[index].querySelector(`text.${clazz}`);
     expect(fieldName).toBeTruthy();
     expect(fieldName!.textContent).toEqual(opt.name);
 
-    const fieldType = allChild[index].querySelector(`text${styles.fieldTextType}`);
+    const fieldType = allChild[index].querySelector(`text.${styles.fieldTextType}`);
     expect(fieldType).toBeTruthy();
     expect(fieldType!.textContent).toEqual(opt.typeRaw!);
 };
@@ -81,19 +82,19 @@ describe("Table", () => {
         expect(ntable.native.children[0].getAttribute("class")).toEqual("wrapped");
         expect(ntable.native.querySelectorAll("text").length).toEqual(1);
 
-        const txtTitle = ntable.native.querySelector(`text${styles.title}`);
+        const txtTitle = ntable.native.querySelector(`text.${styles.title}`);
         expect(txtTitle).toBeTruthy();
         expect(txtTitle!.textContent).toEqual(ntbOpt.name);
 
-        const pathIcon = ntable.native.querySelector(`use${styles.tableIcon}`);
+        const pathIcon = ntable.native.querySelector(`use.${styles.tableIcon}`);
         expect(pathIcon).toBeTruthy();
         expect(pathIcon!.getAttribute("href")).toEqual(`#${icons.tableIcon}`);
 
-        const pathHeader = ntable.native.querySelector(`path${styles.header}`);
+        const pathHeader = ntable.native.querySelector(`path.${styles.header}`);
         expect(pathHeader).toBeTruthy();
         expect(pathHeader!.getAttribute("d")).toBeTruthy();
 
-        const pathFooter = ntable.native.querySelector(`path${styles.footer}`);
+        const pathFooter = ntable.native.querySelector(`path.${styles.footer}`);
         expect(pathFooter).toBeTruthy();
         expect(pathFooter!.getAttribute("d")).toBeTruthy();
 
@@ -112,8 +113,8 @@ describe("Table", () => {
         expect(txtChilds[0].textContent).toEqual(ntbOpt.name);
         expect(txtChilds[1].textContent).toEqual(ntbOpt.engine!);
 
-        const pathHeader = ntable.native.querySelector(`path${styles.header}`);
-        const pathFooter = ntable.native.querySelector(`path${styles.footer}`);
+        const pathHeader = ntable.native.querySelector(`path.${styles.header}`);
+        const pathFooter = ntable.native.querySelector(`path.${styles.footer}`);
 
         expect(txtChilds[0]!.vennType(pathHeader!)).toEqual(VennType.Inside);
         expect(txtChilds[1]!.vennType(pathFooter!)).toEqual(VennType.Inside);

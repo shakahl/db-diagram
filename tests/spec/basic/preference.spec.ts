@@ -1,7 +1,13 @@
-import { ControlLocation, defaultDiagramSetting, defaultRelationshipSetting, defaultTableSetting } from "@db-diagram/preference/defaults";
+import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
+
+import {
+    ControlLocation,
+    defaultDiagramSetting,
+    defaultRelationshipSetting,
+    defaultTableSetting,
+} from "@db-diagram/preference/defaults";
 import { Preference } from "@db-diagram/preference/pref";
 import { onDomReady } from "@db-diagram/shares/elements";
-import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 
 let inspectDiagram: DiagramFixtures;
 

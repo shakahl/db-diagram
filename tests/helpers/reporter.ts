@@ -1,6 +1,6 @@
-import { ConsoleTable, DataTable, TableOptions } from "@db-diagram/tests/helpers/tables";
 import chalk from "chalk";
 import karma from "karma";
+import { ConsoleTable, DataTable, TableOptions } from "./tables";
 
 /** */
 interface Browser {

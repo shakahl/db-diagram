@@ -1,6 +1,6 @@
-import { ReportSpec } from "@db-diagram/tests/helpers/reporter";
 import { resolve } from "path";
 import { format } from "util";
+import { ReportSpec } from "./reporter";
 
 /** */
 interface FileState {

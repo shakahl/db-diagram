@@ -177,7 +177,7 @@ export class Visualization {
      */
     public createSvgRootElement(): SVGSVGElement {
         const svg = Base.createElement("svg");
-        const attr = { class: `${styles.dbdg.substr(1)}`, width: "100%", height: "100%" };
+        const attr = { class: `${styles.dbdg}`, width: "100%", height: "100%" };
         return applyAttribute(svg, attr);
     }
 

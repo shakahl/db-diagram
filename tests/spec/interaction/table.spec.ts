@@ -1,9 +1,10 @@
-import { Table } from "@db-diagram/elements/table";
-import { Point, Size } from "@db-diagram/elements/utils/types";
-import { onDomReady, Visualization } from "@db-diagram/shares/elements";
 import { EventSimulation } from "@db-diagram/tests/helpers/events";
 import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 import { calculateFinalCoordinate } from "@db-diagram/tests/helpers/svg";
+
+import { Table } from "@db-diagram/elements/table";
+import { Point, Size } from "@db-diagram/elements/utils/types";
+import { onDomReady, Visualization } from "@db-diagram/shares/elements";
 
 const styles = Visualization.getInstance().getStylesDts();
 let inspectDiagram: DiagramFixtures;

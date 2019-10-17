@@ -3,7 +3,7 @@ import { Diagram } from "@db-diagram/elements/diagram";
 import { Table } from "@db-diagram/elements/table";
 import { ParseViewBox, ViewBox } from "@db-diagram/elements/utils/attributes";
 import { FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
-import { loadFixtures } from "@db-diagram/tests/helpers/karma";
+import { loadFixtures } from "./karma";
 
 /**
  *
