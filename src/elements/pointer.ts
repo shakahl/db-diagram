@@ -2,6 +2,7 @@ import { Base } from "@db-diagram/elements/base";
 import { Diagram } from "@db-diagram/elements/diagram";
 import { GlobalAttribute } from "@db-diagram/elements/utils/attributes";
 import { Point } from "@db-diagram/elements/utils/types";
+import e = require("express");
 
 /**
  * Add custom properties to a window object to reference to diagram object.
@@ -46,6 +47,9 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
    private static onPointerUp: PointerCallback;
    private static onPointerAbort: PointerCallback;
 
+   // distant consider as movement action.
+   private static readonly TOUCH_CLIK_SLOP = 1;
+
    // initialize Pointer Event callback
    private static initilize() {
       if (Pointer.onPointerDown) {
@@ -79,6 +83,7 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
          pointer.pEvt.deltaY = 0;
          pointer.pEvt.event = event;
          pointer.onPointerDown(pointer.pEvt);
+         pointer.inSmallRegion = true;
 
          window.__dbref = pointer;
          window.addEventListener("pointermove", Pointer.onPointerMove);
@@ -86,9 +91,10 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
 
       // A callback event to handle event when touch move or mouse click move.
       Pointer.onPointerMove = function(this: SVGElement, event: PointerEvent): any {
-         const pointer = this.__dbref as Pointer<SVGGraphicsElement, GlobalAttribute>;
+         const pointer = (this.__dbref || window.__dbref) as Pointer<SVGGraphicsElement, GlobalAttribute>;
          if (pointer.dragRegistered && (pointer.pointerState === Pointer.POINTER_DOWN ||
             pointer.pointerState === Pointer.POINTER_MOVE)) {
+
             event.preventDefault();
             event.stopPropagation();
 
@@ -99,25 +105,31 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
             pointer.pEvt!.deltaX = svgPoint.x - pointer.originalState!.x;
             pointer.pEvt!.deltaY = svgPoint.y - pointer.originalState!.y;
 
-            if (!(pointer instanceof Diagram)) {
-               const parentMatrix = (pointer.rootSvg!.__dbref as Diagram).transformMatrix!;
-               pointer.transformMatrix = pointer.originalTransformMatrix!
-                  .multiply(parentMatrix.inverse())
-                  .translate(pointer.pEvt!.deltaX, pointer.pEvt!.deltaY)
-                  .multiply(parentMatrix);
-            } else {
-               pointer.transformMatrix = pointer.originalTransformMatrix!
-                  .translate(pointer.pEvt!.deltaX, pointer.pEvt!.deltaY);
-            }
+            const delta = Math.max(Math.abs(pointer.pEvt!.deltaX), Math.abs(pointer.pEvt!.deltaY));
 
-            pointer.transformMatrix!.e = Math.round(pointer.transformMatrix!.e);
-            pointer.transformMatrix!.f = Math.round(pointer.transformMatrix!.f);
+            // small movement is ignored and consider that as single click or tap.
+            if (delta > Pointer.TOUCH_CLIK_SLOP) {
+               pointer.inSmallRegion = false;
+               if (!(pointer instanceof Diagram)) {
+                  const parentMatrix = (pointer.rootSvg!.__dbref as Diagram).transformMatrix!;
+                  pointer.transformMatrix = pointer.originalTransformMatrix!
+                     .multiply(parentMatrix.inverse())
+                     .translate(pointer.pEvt!.deltaX, pointer.pEvt!.deltaY)
+                     .multiply(parentMatrix);
+               } else {
+                  pointer.transformMatrix = pointer.originalTransformMatrix!
+                     .translate(pointer.pEvt!.deltaX, pointer.pEvt!.deltaY);
+               }
 
-            if (pointer.pointerState !== Pointer.POINTER_MOVE) {
-               pointer.pointerState = Pointer.POINTER_MOVE;
-               pointer.onDragStart(pointer.pEvt!);
+               pointer.transformMatrix!.e = Math.round(pointer.transformMatrix!.e);
+               pointer.transformMatrix!.f = Math.round(pointer.transformMatrix!.f);
+
+               if (pointer.pointerState !== Pointer.POINTER_MOVE) {
+                  pointer.pointerState = Pointer.POINTER_MOVE;
+                  pointer.onDragStart(pointer.pEvt!);
+               }
+               pointer.onDragMove(pointer.pEvt!);
             }
-            pointer.onDragMove(pointer.pEvt!);
          }
       };
 
@@ -136,7 +148,7 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
          pointer.pEvt.event = event;
          pointer.pEvt.point = pointer.toSvgCoordinate(event);
 
-         if (pointer.pointerState === Pointer.POINTER_DOWN) {
+         if (pointer.inSmallRegion) {
             pointer.onClick(pointer.pEvt);
          }
          pointer.onDragEnd(pointer.pEvt);
@@ -193,6 +205,7 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
    private pEvt?: PointerEvt;
    private clickRegistered = false;
    private dragRegistered = false;
+   private inSmallRegion = true;
 
    constructor(element: T, attr?: A) {
       super(element, attr);
@@ -238,7 +251,7 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
          return svg ? this.transformMatrix!.e : this.axisX;
       }
       // do not update y when pointer is down or move
-      if (this.pointerState === Pointer.POINTER_DOWN || this.pointerState  === Pointer.POINTER_MOVE) {
+      if (this.pointerState === Pointer.POINTER_DOWN || this.pointerState === Pointer.POINTER_MOVE) {
          return this;
       }
 
@@ -420,7 +433,7 @@ export abstract class Pointer<T extends SVGGraphicsElement, A extends GlobalAttr
     * @param event pointer event.
     */
    protected onDragMove(evt: PointerEvt): void {
-      const domRect = this.toDomCoordinate({x: this.transformMatrix!.e, y: this.transformMatrix!.f});
+      const domRect = this.toDomCoordinate({ x: this.transformMatrix!.e, y: this.transformMatrix!.f });
       this.axisX = domRect.x;
       this.axisY = domRect.y;
       this.updateTransform();

@@ -54,6 +54,7 @@ const config: webpack.Configuration = {
    },
    output: {
       library: "DBDiagram",
+      libraryTarget: 'commonjs2',
       path: path.resolve(__dirname, "dist"),
    },
    plugins: [pluginSvg, pluginCss],
