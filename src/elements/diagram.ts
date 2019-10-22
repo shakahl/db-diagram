@@ -11,10 +11,6 @@ import { PanZoomEventType, WheelData, ZoomEventListener } from "@db-diagram/even
 import { Preference } from "@db-diagram/preference/pref";
 import { onDomReady, Visualization } from "@db-diagram/shares/elements";
 
-// style reference variable contain all variable, class and id declaration
-// from style sheet file.
-const styles = Visualization.getInstance().getStylesDts();
-
 /**
  * Database diagram class.
  */
@@ -327,14 +323,14 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
     * Call when user mouse click is down or touch down.
     */
    protected onPointerDown(): void {
-      this.native.classList.add(styles.move);
+      this.native.classList.add(this.visualization.getStylesDts().move);
    }
 
    /**
     * Call when user mouse click is up or touch up.
     */
    protected onPointerUp(): void {
-      this.native.classList.remove(styles.move);
+      this.native.classList.remove(this.visualization.getStylesDts().move);
    }
 
    /**
@@ -357,7 +353,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    protected onPanZoomStart(evt: CustomEvent) {
       this.originalTransformMatrix = this.cloneTransformMatrix(this.transformMatrix!);
       this.originalState = this.toSvgCoordinate(evt).matrixTransform(this.transformMatrix!.inverse());
-      this.native.classList.add(styles.zoom);
+      this.native.classList.add(this.visualization.getStylesDts().zoom);
    }
 
    /**
@@ -367,9 +363,9 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       this.originalState = undefined;
       this.originalTransformMatrix = undefined;
       this.lastWheelEventTime = 0;
-      this.native.classList.remove(styles.zoom);
-      this.native.classList.remove(styles.zoomIn);
-      this.native.classList.remove(styles.zoomOut);
+      this.native.classList.remove(this.visualization.getStylesDts().zoom);
+      this.native.classList.remove(this.visualization.getStylesDts().zoomIn);
+      this.native.classList.remove(this.visualization.getStylesDts().zoomOut);
    }
 
    /**
@@ -389,9 +385,9 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       const zoomAmount = Math.pow(1 + 0.1, -1 * delta);
 
       if (zoomAmount > 1) {
-         this.native.classList.add(styles.zoomIn);
+         this.native.classList.add(this.visualization.getStylesDts().zoomIn);
       } else if (zoomAmount < 1) {
-         this.native.classList.add(styles.zoomOut);
+         this.native.classList.add(this.visualization.getStylesDts().zoomOut);
       }
 
       this.setZoomAmount(zoomAmount, { x: wd.clientX, y: wd.clientY });

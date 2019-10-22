@@ -169,7 +169,10 @@ export class Visualization {
         this.root = root;
         this.shareSvg = Base.createElement("svg");
         this.textElement = this.shareSvg.appendChild(Base.createElement("text"));
-        applyAttribute(this.shareSvg, { visibility: "hidden" });
+        applyAttribute(this.shareSvg, {
+            style: "position: absolute; z-index: -1; top: 0; left: 0; width: 1px; height: 1px",
+            visibility: "hidden",
+        });
     }
 
     /**

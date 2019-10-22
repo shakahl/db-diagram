@@ -28,7 +28,7 @@ export {
 
 export {
    onDomReady,
-   Visualization as Virtualization,
+   Visualization,
 } from "@db-diagram/shares/elements";
 
 /** export options */
@@ -47,3 +47,32 @@ export {
    DataType,
    TableMetadata,
 } from "@db-diagram/elements/utils/types";
+
+let svgIconsSet: SVGSVGElement | undefined;
+/**
+ * Add a set of icons into html dom hierarchy.
+ * @param url url to icon set
+ */
+export function addIconSet(url: string): Promise<boolean> | boolean {
+   if (!svgIconsSet) {
+      return fetch(url).then(async (response) => {
+         if (response.ok) {
+            return response.text();
+         } else {
+            return false;
+         }
+      }).then((txt) => {
+         if (txt) {
+            const div = document.createElement("div");
+            div.innerHTML = txt;
+            div.children[0].setAttribute("style", "display: none;");
+            svgIconsSet = div.children[0] as SVGSVGElement;
+            document.body.append(svgIconsSet!);
+            return true;
+         } else {
+            return false;
+         }
+      });
+   }
+   return true;
+}
