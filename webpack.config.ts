@@ -31,7 +31,6 @@ const config: webpack.Configuration = {
    entry: {
       main: "./src/index.ts",
    },
-   mode: "development",
    module: {
       rules: [
          {
@@ -49,7 +48,7 @@ const config: webpack.Configuration = {
       minimizer: [
          new TerserPlugin({
             sourceMap: true,
-            test: /\.ts(\?.*)?$/i,
+            test: /\.js(\?.*)?$/i,
          }),
       ],
    },

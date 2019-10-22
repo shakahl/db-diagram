@@ -22,6 +22,8 @@ export interface TableOptions {
    engine?: string;
    // TODO: probably not needed.
    additional?: string;
+   // If relation between table should stay visible while table table is moving
+   showRelationOnDrag?: boolean;
 }
 
 /**

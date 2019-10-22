@@ -7,6 +7,9 @@ import config from "./webpack.config";
 // delete mode to allow webpack inherit mode from command line instead.
 delete config.mode;
 
+// override source map when build.
+config.devtool = "source-map";
+
 // change typescript config to remove test file from compiles.
 const ruleset = config.module!.rules[0].use as webpack.RuleSetLoader;
 (ruleset.options as any).configFile = "tsconfig.build.json";

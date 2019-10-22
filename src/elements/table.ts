@@ -497,13 +497,19 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Call whenn a drag event is detected.
     */
    protected onDragStart() {
-      this.relationVisibility(false);
+      if (!this.tableOptions.showRelationOnDrag) {
+         this.relationVisibility(false);
+      }
    }
 
    /**
     * Call when a drag event is aborted.
     */
-   protected onDragAbort() { this.relationVisibility(true); }
+   protected onDragAbort() {
+      if (!this.tableOptions.showRelationOnDrag) {
+         this.relationVisibility(true);
+      }
+   }
 
    /**
     * Call when a drag event ended.
