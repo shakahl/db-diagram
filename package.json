@@ -1,14 +1,14 @@
 {
   "name": "db-diagram",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Database diagram",
-  "main": "./src/index.ts",
-  "types": "./dist/types/index.d.ts",
+  "main": "dist/db-diagram.js",
+  "types": "dist/types/index.d.ts",
   "author": "sreng.veasna@gmail.com",
   "license": "MIT",
   "scripts": {
-    "build:dev": "NODE_ENV=production webpack --mode development --config webpack.config.build.ts -o dist/db-diagram.js",
-    "build:prod": "NODE_ENV=production webpack --mode production --config webpack.config.build.ts -o dist/db-diagram.min.js",
+    "build:dev": "webpack --mode development --config webpack.config.build.ts -o dist/db-diagram.js",
+    "build:prod": "webpack --mode production --config webpack.config.build.ts -o dist/db-diagram.min.js",
     "clean": "rm -rf ./dist/*",
     "tslint": "tslint --fix",
     "eslint": "eslint --fix",
@@ -16,7 +16,8 @@
     "test:all": "yarn test --browsers=ChromeHeadless,FirefoxHeadless,Chrome,Firefox,Safari",
     "test:headless": "yarn test --browsers=ChromeHeadless,FirefoxHeadless",
     "test:ci": "yarn test --browsers=ChromeHeadlessNoSandbox,FirefoxHeadless",
-    "test": "NODE_ENV=test karma start karma.config.ts"
+    "test": "NODE_ENV=test karma start karma.config.ts",
+    "release": "yarn publish --access public"
   },
   "devDependencies": {
     "@krobkrong/resources-utilities": "^0.1.16",
