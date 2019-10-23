@@ -88,7 +88,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
     * Create diagram object.
     */
    constructor(attr: SvgAttribute = {}, options?: DiagramOptions) {
-      super(Visualization.getInstance().createSvgRootElement(), ((a: SvgAttribute): SvgAttribute => {
+      super(Visualization.createSvgRootElement(), ((a: SvgAttribute): SvgAttribute => {
          a.viewBox = ApplyViewBox(a.viewBox);
          return a;
       })(attr));

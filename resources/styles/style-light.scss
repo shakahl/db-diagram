@@ -12,7 +12,7 @@ $border-table-selected-color: #00bd74;
 $relation-connector-color: #bf3f70;
 $relation-line-color: #7d205b;
 
-:root {
+:root, :host{
    --dbdg-workspace-backgroun: #e8eded;
 
    --dbdg-table-icon-color: #{$text-table-info-color};
@@ -128,6 +128,7 @@ svg.dbdg g.wrapped path.header:hover, svg.dbdg g.wrapped path.footer:hover {
 }
 
 rect.table-background {
+   stroke: none;
    fill: var(--dbdg-table-background-color);
 }
 

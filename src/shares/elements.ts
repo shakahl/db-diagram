@@ -59,12 +59,13 @@ export class Visualization {
         if (root instanceof SVGSVGElement) {
             if (root.__visualization) { return root.__visualization; }
 
-            const customRoot = this.findCustomRootElement(root);
-            if (customRoot !== undefined && customRoot.shadowRoot) {
+            const doc = this.findCustomRootElement(root);
+            if (doc !== undefined) {
                 if (!root.__visualization) {
                     root.__visualization = new Visualization(root as SVGSVGElement);
+                    root.__visualization.doc = doc;
                     onDomReady(() => {
-                        customRoot!.shadowRoot!.appendChild(root.__visualization.shareSvg);
+                        doc.appendChild(root.__visualization.shareSvg);
                         root.__visualization.updatePropertiesValue();
                     });
                 }
@@ -75,6 +76,7 @@ export class Visualization {
         if (!Visualization.instance) {
             Visualization.instance = new Visualization(root);
             onDomReady(() => {
+                Visualization.instance.doc = document;
                 document.body.appendChild(Visualization.instance.shareSvg);
                 Visualization.instance.updatePropertiesValue();
             });
@@ -94,15 +96,24 @@ export class Visualization {
     }
 
     /**
+     * create root svg element.
+     */
+    public static createSvgRootElement(): SVGSVGElement {
+        const svg = Base.createElement("svg");
+        const attr = { class: `${styles.dbdg}`, width: "100%", height: "100%" };
+        return applyAttribute(svg, attr);
+    }
+
+    /**
      * Find the parent web component element. If diagram did not use under a web component,
      * it will return undefined value.
-     * @param ele svg root diagram element.
+     * @param node svg root diagram element.
      */
-    public static findCustomRootElement(ele: Element): Element | undefined {
-        if (ele.tagName.includes("-")) {
-            return ele;
-        } else if (ele.parentElement) {
-            return this.findCustomRootElement(ele.parentElement);
+    public static findCustomRootElement(node: Node): Document | DocumentFragment | undefined {
+        if (node.parentNode) {
+            return this.findCustomRootElement(node.parentNode);
+        } else if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ) {
+            return node as DocumentFragment;
         } else {
             return undefined;
         }
@@ -164,6 +175,7 @@ export class Visualization {
     private shareSvg: SVGSVGElement;
     private textElement: SVGTextElement;
     private root: HTMLElement | SVGSVGElement;
+    private doc?: Document | DocumentFragment;
 
     private constructor(root: HTMLElement | SVGSVGElement) {
         this.root = root;
@@ -173,15 +185,6 @@ export class Visualization {
             style: "position: absolute; z-index: -1; top: 0; left: 0; width: 1px; height: 1px",
             visibility: "hidden",
         });
-    }
-
-    /**
-     * create root svg element.
-     */
-    public createSvgRootElement(): SVGSVGElement {
-        const svg = Base.createElement("svg");
-        const attr = { class: `${styles.dbdg}`, width: "100%", height: "100%" };
-        return applyAttribute(svg, attr);
     }
 
     /**
@@ -228,7 +231,7 @@ export class Visualization {
      */
     public getIconsElementSize(id: string, force: boolean = false, eleCb?: ElementCallback): Box {
         if (this.iconsSize.get(id) === undefined || force) {
-            const ele = document.querySelector(`#${id}`) as SVGElement;
+            const ele = this.doc!.querySelector(`#${id}`) as SVGElement;
             if (!ele) { throw new Error(`Element id: ${id} not found.`); }
             if (ele.tagName === "symbol") {
                 // TODO: compute with viewbox value, refx and refy. For now we relied on pre-compute or
@@ -341,10 +344,10 @@ export class Visualization {
      * Return a readonly style declaration.
      */
     public readOnlyElementStyle(): CSSStyleDeclaration {
-        if (this.root.tagName.includes("-") && this.root.shadowRoot) {
-            return getComputedStyle(this.root);
+        if (this.doc instanceof DocumentFragment) {
+            return getComputedStyle(this.doc!.ownerDocument!.documentElement);
         } else {
-            return getComputedStyle(document.documentElement);
+            return getComputedStyle(this.doc!.documentElement);
         }
     }
 
@@ -352,10 +355,10 @@ export class Visualization {
      * Return a writable style declaration.
      */
     public writableElementStyle(): CSSStyleDeclaration {
-        if (this.root.tagName.includes("-") && this.root.shadowRoot) {
-            return this.root.style;
+        if (this.doc instanceof DocumentFragment) {
+            return this.doc!.ownerDocument!.documentElement.style;
         } else {
-            return document.documentElement.style;
+            return this.doc!.documentElement.style;
         }
     }
 

@@ -12,7 +12,7 @@ $border-table-selected-color: #00bd74;
 $relation-connector-color: #c7a32e;
 $relation-line-color: #00cebd;
 
-:root {
+:root, :host{
    --dbdg-workspace-backgroun: #2d2f30;
 
    --dbdg-table-icon-color: #{$text-table-info-color};

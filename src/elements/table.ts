@@ -36,7 +36,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
    // create field table element.
    private static createField(table: Table, options: FieldOptions): FieldUI {
-      const visual = Visualization.getInstance();
+      const visual = table.parent!.visualization;
       const icons = visual.getIconsDts();
       const styles = visual.getStylesDts();
       const padding = Visualization.TableTextPadding;
@@ -124,7 +124,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
    }
 
    // create table footer background
-   private static createFooterPath(size: Size, headerHeight: number, footerHeight: number): string {
+   private static createFooterPath(size: Size, iconWidth: number, headerHeight: number, footerHeight: number): string {
       const x = 0;
       const ty = headerHeight;
       const y = size.height - footerHeight;
@@ -133,7 +133,6 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const vx = x + size.width - Table.roundCorner;
       const rxl = x + Table.roundCorner;
       const rxr = x + size.width;
-      const iconWidth = Visualization.getInstance().tableFieldIconWidth;
       return `M${x},${ty} V${hy} Q${x},${rp} ${rxl},${rp} H${vx} Q${rxr},${rp} ${rxr},${hy}` +
          ` V${ty} H${rxr} V${y} H${(x + iconWidth + 1)} V${ty} H${(x + iconWidth)} V${y} H${x} V${ty} H${x}Z`;
    }
@@ -171,7 +170,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       this.tableOptions = options;
       this.parent = parent;
 
-      const visual = Visualization.getInstance();
+      const visual = parent.visualization;
       const icons = visual.getIconsDts();
       const styles = visual.getStylesDts();
 
@@ -199,7 +198,8 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       this.footer = this.wrapped.appendChild(applyAttribute(Base.createElement("path"), {
          class: `${styles.footer}`,
-         d: Table.createFooterPath(size, visual.tableHeaderHeight, visual.tableFooterHeight),
+         d: Table.createFooterPath(
+            size, visual.tableFieldIconWidth, visual.tableHeaderHeight, visual.tableFooterHeight),
       } as PathAttribute));
 
       this.tableTitle = this.wrapped.appendChild(Base.createElement("text"));
@@ -377,7 +377,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          throw new Error(`index ${index} is out of range of 0 to ${this.fieldsUi.length}`);
       }
 
-      const visual = Visualization.getInstance();
+      const visual = this.parent!.visualization;
 
       const top = Visualization.TableFieldPadding.top;
       const y = visual.tableHeaderHeight + (index * visual.tableFieldHeight) +
@@ -435,7 +435,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
                fUI.name.getBBox().width + typeWidth + 16 + 16 + 8 + (space * 3));
          });
 
-         const visual = Visualization.getInstance();
+         const visual = this.parent!.visualization;
 
          this.wrapped.removeChild(fieldUi.fieldGroup);
          const totalFieldHeight = (rowHeight * (this.fieldsUi.length));
@@ -537,7 +537,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       let updateFooter: boolean = false;
       let updateHeader: boolean = false;
 
-      const visual = Visualization.getInstance();
+      const visual = this.parent!.visualization;
       const padding = Visualization.TableTextPadding;
 
       if (height !== this.size.height) {
@@ -564,13 +564,15 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          });
       }
 
-      if (updateHeader) { applyAttribute(this.header, {
-         d: Table.createHeaderPath(this.size, visual.tableHeaderHeight),
-      });
+      if (updateHeader) {
+         applyAttribute(this.header, {
+            d: Table.createHeaderPath(this.size, visual.tableHeaderHeight),
+         });
       }
       if (updateFooter) {
          applyAttribute(this.footer, {
-            d: Table.createFooterPath(this.size, visual.tableHeaderHeight, visual.tableFooterHeight),
+            d: Table.createFooterPath(
+               this.size, visual.tableFieldIconWidth, visual.tableHeaderHeight, visual.tableFooterHeight),
          });
          if (this.tableEngine) {
             applyAttribute(this.tableEngine, {
