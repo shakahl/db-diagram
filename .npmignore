@@ -1,0 +1,17 @@
+npm-debug.log
+node_modules
+coverage
+examples
+.sample
+.codacy
+demo
+tests
+build
+src
+.vscode
+.circleci
+yarn-error.log
+tsconfig.json
+karma.config.ts
+webpack.config.ts
+webpack.config.build.ts

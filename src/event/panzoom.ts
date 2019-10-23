@@ -39,14 +39,14 @@ export class ZoomEventListener {
      * Register wheel event.
      */
     public register() {
-        this.ele.addEventListener("wheel", this.listener = (evt: WheelEvent) => {
+        this.listener = (evt: WheelEvent) => {
             if (!evt.ctrlKey) { return; }
 
             evt.preventDefault();
             evt.stopPropagation();
-
             this.onWheel(evt);
-        });
+        };
+        this.ele.addEventListener("wheel", this.listener);
     }
 
     /**

@@ -66,3 +66,4 @@ coverage
 .vscode
 .codacy
 .DS_Store
+.sample

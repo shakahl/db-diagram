@@ -2,10 +2,11 @@ import karma from "karma";
 import { join, resolve } from "path";
 import webpack from "webpack";
 import { KarmaPlugins } from "./tests/helpers/karma";
-import webpackConfig from "./webpack.config";
+import webpackConfigDef from "./webpack.config";
 
 module.exports = (config: karma.Config) => {
-   const mod = webpackConfig.module!;
+   const webpackConfig = webpackConfigDef({}, { mode: "production", domain: "browser" });
+   const mod = webpackConfig!.module!;
    mod.rules.push({
       enforce: "post",
       include: resolve("src/"),

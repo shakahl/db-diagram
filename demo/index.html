@@ -11,36 +11,38 @@
 </head>
 
 <body>
-   <script src="main.js"></script>
+   <script src="browser/db-diagram.default.js"></script>
    <div id="mydiv" style="width: 100%; height:100%;"></div>
    <script>
       DBDiagram.onDomReady(() => {
-         var svg = new DBDiagram.Diagram({
+         var diagram = new DBDiagram.Diagram({
             id: 'sample',
             height: '100%'
          });
-         svg.attach("#mydiv");
+         diagram.attach("#mydiv");
+
          const data = JSON.parse(`[{"name":"Student","engine":"InnoDB","additional":"Extra!","fields":[{"name":"id","primary":true,"type":5},{"name":"name","type":12},{"name":"age","type":3},{"name":"gender","type":13,"typeSize":1},{"name":"birthday","type":16},{"name":"updatedAt","type":16},{"name":"createdAt","type":16}]},{"name":"Test","engine":"InnoDB","additional":"Extra!","fields":[{"name":"id","primary":true,"type":5},{"name":"score","type":3},{"name":"at","type":16},{"name":"updatedAt","type":16},{"name":"createdAt","type":16}]},{"name":"Course","engine":"InnoDB","additional":"Extra!","fields":[{"name":"id","primary":true,"type":5},{"name":"Subject","type":12},{"name":"Credit","type":3},{"name":"Hours","type":3},{"name":"updatedAt","type":16},{"name":"createdAt","type":16}]}]`);
          let tables = [];
          data.forEach(tbOpt => {
             const fields = tbOpt.fields;
             delete tbOpt.fields;
-            const table = svg.table(tbOpt);
+            const table = diagram.table(tbOpt);
             fields.forEach((field) => { table.addField(field) });
             tables.push(table);
          });
 
          tables[0].x(100).y(50);
          tables[1].x(450).y(120);
+         tables[2].x(50).y(320);
 
-         const relation1 = new DBDiagram.Relation(svg, {
+         const relation1 = new DBDiagram.Relation(diagram, {
             primaryTable: tables[0],
             foreignTable: tables[1],
             line: true,
             weak: true
          });
 
-         const relation2 = new DBDiagram.Relation(svg, {
+         const relation2 = new DBDiagram.Relation(diagram, {
             primaryTable: tables[2],
             foreignTable: tables[1],
             line: false,
