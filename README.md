@@ -1,5 +1,7 @@
 # SVG Database Diagram
 
+[![npm][npm-beta]][npm-url]
+[![npm][npm-latest]][npm-url]
 [![test][test]][test-url]
 [![coverage][cover]][cover-url]
 [![Codacy Badge][codacy]][codacy-url]
@@ -19,11 +21,11 @@ A lightweight library for manipulating Database diagram using SVG, without any d
 ### Using Node Module
 
 ```bash
-yarn add @krobkrong/db-diagram
+yarn add @krobkrong/db-diagram@beta
 ```
 or
 ```bash
-npm install @krobkrong/db-diagram
+npm install @krobkrong/db-diagram@beta
 ```
 
 For more example on how to use it with VueJS, React ...etc see [examples](example)
@@ -119,6 +121,10 @@ The project, **db-diagram** is young and welcome any contributor to the project.
 ## Documentation
 
 [To Be Available](https://github.com/krobkrong/db-diagram)
+
+[npm-beta]: https://img.shields.io/npm/v/@krobkrong/db-diagram/beta.svg
+[npm-latest]: https://img.shields.io/npm/v/@krobkrong/db-diagram/latest.svg
+[npm-url]: https://www.npmjs.com/package/@krobkrong/db-diagram
 
 [test]: https://circleci.com/gh/krobkrong/db-diagram.svg?style=svg
 [test-url]: https://circleci.com/gh/krobkrong/db-diagram
