@@ -1,10 +1,14 @@
 {
-  "name": "db-diagram",
-  "version": "0.1.0",
+  "name": "@krobkrong/db-diagram",
+  "version": "0.1.1",
   "description": "Database diagram",
   "main": "dist/db-diagram.js",
   "types": "dist/types/index.d.ts",
   "author": "sreng.veasna@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krobkrong/db-diagram.git"
+  },
   "license": "MIT",
   "scripts": {
     "build:dev": "webpack --mode development --config webpack.config.build.ts -o dist/db-diagram.js",
