@@ -23,7 +23,7 @@ export interface CommandArgument {
    domain: "browser" | "node";
 }
 
-export default function (_: {}, argv: CommandArgument) {
+export default function(_: {}, argv: CommandArgument) {
 
    let parentDir = "";
    if (argv.domain === "browser") {
@@ -67,12 +67,12 @@ export default function (_: {}, argv: CommandArgument) {
          ],
       },
       output: {
-         library: "DBDiagram",
          filename: (): string => {
             const includeDefault = process.env.NODE_ENV === "production" ? "" : ".default";
             const suffix = argv.mode === "production" ? ".min" : "";
             return `${parentDir}db-diagram${includeDefault}${suffix}.js`;
          },
+         library: "DBDiagram",
          libraryTarget: "umd",
          path: path.resolve(__dirname, "dist"),
       },
@@ -91,4 +91,4 @@ export default function (_: {}, argv: CommandArgument) {
    };
 
    return config;
-};
+}

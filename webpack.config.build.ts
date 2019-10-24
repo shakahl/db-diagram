@@ -3,7 +3,7 @@ import ts from "typescript";
 import webpack from "webpack";
 import webconfig, { CommandArgument } from "./webpack.config";
 
-export default function (env: {}, argv:CommandArgument) {
+export default function (env: {}, argv: CommandArgument) {
 
     const config = webconfig(env, argv);
 
@@ -39,7 +39,8 @@ export default function (env: {}, argv:CommandArgument) {
                         }
                     };
                     if (resolveFiles.get(node.text) !== undefined) {
-                        const relativeImport = relative(dirname(sourceFile), resolveFiles.get(node.text)!.resolvedFileName);
+                        const relativeImport = relative(dirname(sourceFile),
+                            resolveFiles.get(node.text)!.resolvedFileName);
                         return importResolver(relativeImport);
                     } else {
                         const parentConfig = require(resolve("tsconfig.json"));
