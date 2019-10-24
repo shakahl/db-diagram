@@ -12,6 +12,7 @@ src
 .circleci
 yarn-error.log
 tsconfig.json
+tsconfig.build.json
 karma.config.ts
 webpack.config.ts
 webpack.config.build.ts

@@ -28,7 +28,7 @@ or
 npm install @krobkrong/db-diagram@beta
 ```
 
-For more example on how to use it with VueJS, React ...etc see [examples](example)
+For more example on how to use it with VueJS, React, Angular ...etc see [examples](example)
 
 ### Using CDN
 

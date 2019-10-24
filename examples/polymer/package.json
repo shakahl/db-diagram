@@ -1,0 +1,16 @@
+{
+  "name": "polymer",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "serve": "polymer serve --npm"
+  },
+  "dependencies": {
+    "@krobkrong/db-diagram": "^0.1.5",
+    "lit-element": "^2.2.1"
+  },
+  "devDependencies": {
+    "polymer-cli": "^1.9.11"
+  }
+}

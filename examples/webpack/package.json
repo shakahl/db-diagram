@@ -1,0 +1,28 @@
+{
+  "name": "webpack",
+  "version": "1.0.0",
+  "description": "Sample webpack db-diagram",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "serve": "webpack-dev-server --mode development"
+  },
+  "dependencies": {
+    "@krobkrong/db-diagram": "^0.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^12.11.5",
+    "@types/webpack": "^4.39.5",
+    "@types/webpack-dev-server": "^3.4.0",
+    "css-loader": "^3.2.0",
+    "style-loader": "^1.0.0",
+    "svg-inline-loader": "^0.8.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.9.0"
+  }
+}
