@@ -1,6 +1,6 @@
 {
   "name": "@krobkrong/db-diagram",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Database diagram",
   "main": "dist/db-diagram.js",
   "types": "dist/types/index.d.ts",
