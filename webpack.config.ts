@@ -26,11 +26,8 @@ export interface CommandArgument {
 export default function (_: {}, argv: CommandArgument) {
 
    let parentDir = "";
-   let libTarget: webpack.LibraryTarget = "var";
    if (argv.domain === "browser") {
       parentDir = "browser/";
-   } else {
-      libTarget = "commonjs2";
    }
 
    const config: webpack.Configuration = {
@@ -76,7 +73,7 @@ export default function (_: {}, argv: CommandArgument) {
             const suffix = argv.mode === "production" ? ".min" : "";
             return `${parentDir}db-diagram${includeDefault}${suffix}.js`;
          },
-         libraryTarget: libTarget,
+         libraryTarget: "umd",
          path: path.resolve(__dirname, "dist"),
       },
       plugins: [pluginSvg, pluginCss],

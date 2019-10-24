@@ -53,14 +53,14 @@ let svgIconsSet: SVGSVGElement | undefined;
  * Add a set of icons into html dom hierarchy.
  * @param url url to icon set
  */
-export function addIconSet(urlOrContent: string): Promise<boolean> | boolean {
+export function addIconSet(urlOrContent: string, parent?: HTMLElement | Node): Promise<boolean> | boolean {
    const inject = (raw: string | boolean): boolean => {
       if (typeof raw === "string") {
          const div = document.createElement("div");
          div.innerHTML = raw;
          div.children[0].setAttribute("style", "display: none;");
          svgIconsSet = div.children[0] as SVGSVGElement;
-         document.body.append(svgIconsSet!);
+         parent ? parent.appendChild(svgIconsSet) : document.body.append(svgIconsSet!);
          return true;
       } else {
          return false;
