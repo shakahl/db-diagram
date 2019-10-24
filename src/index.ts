@@ -53,26 +53,33 @@ let svgIconsSet: SVGSVGElement | undefined;
  * Add a set of icons into html dom hierarchy.
  * @param url url to icon set
  */
-export function addIconSet(url: string): Promise<boolean> | boolean {
+export function addIconSet(urlOrContent: string): Promise<boolean> | boolean {
+   const inject = (raw: string | boolean): boolean => {
+      if (typeof raw === "string") {
+         const div = document.createElement("div");
+         div.innerHTML = raw;
+         div.children[0].setAttribute("style", "display: none;");
+         svgIconsSet = div.children[0] as SVGSVGElement;
+         document.body.append(svgIconsSet!);
+         return true;
+      } else {
+         return false;
+      }
+   };
    if (!svgIconsSet) {
-      return fetch(url).then(async (response) => {
-         if (response.ok) {
-            return response.text();
-         } else {
-            return false;
-         }
-      }).then((txt) => {
-         if (txt) {
-            const div = document.createElement("div");
-            div.innerHTML = txt;
-            div.children[0].setAttribute("style", "display: none;");
-            svgIconsSet = div.children[0] as SVGSVGElement;
-            document.body.append(svgIconsSet!);
-            return true;
-         } else {
-            return false;
-         }
-      });
+      if (urlOrContent.includes("<svg>")) {
+         return inject(urlOrContent);
+      } else {
+         return fetch(urlOrContent).then(async (response) => {
+            if (response.ok) {
+               return response.text();
+            } else {
+               return false;
+            }
+         }).then((raw: string | boolean) => {
+            return inject(raw);
+         });
+      }
    }
    return true;
 }
