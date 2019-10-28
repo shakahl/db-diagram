@@ -118,6 +118,10 @@ Note: To run command `yarn test:headless`, you must have at least Chrome and Fir
 
 The project, **db-diagram** is young and welcome any contributor to the project.
 
+### Architecture
+
+<img src="./resources/documents/assets/architectures.svg" alt="IE / Edge" width="500px"/>
+
 ## Documentation
 
 [To Be Available](https://github.com/krobkrong/db-diagram)
