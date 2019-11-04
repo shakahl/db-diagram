@@ -48,11 +48,17 @@ export default function(_: {}, argv: CommandArgument) {
       module: {
          rules: [
             {
+               test: /\.service\.worker\.ts$/,
+               use: {
+                  loader: "service-worker-loader"
+               }
+            },
+            {
                test: /\.ts$/,
                use: {
                   loader: "ts-loader",
                   options: {
-                     configFile: "tsconfig.json",
+                     configFile: "tsconfig.test.json",
                   },
                },
             },
@@ -88,6 +94,10 @@ export default function(_: {}, argv: CommandArgument) {
          extensions: [".ts", ".js", ".css", ".scss", ".svg"],
          plugins: [pluginSvg, pluginCss],
       },
+      resolveLoader: {
+         modules: ["node_modules", `${__dirname}/webpack/loaders`],
+         extensions: [".js", ".json", ".ts"]
+      }
    };
 
    return config;

@@ -3,7 +3,7 @@ import ts from "typescript";
 import webpack from "webpack";
 import webconfig, { CommandArgument } from "./webpack.config";
 
-export default function (env: {}, argv: CommandArgument) {
+export default function(env: {}, argv: CommandArgument) {
 
     const config = webconfig(env, argv);
 
@@ -14,7 +14,7 @@ export default function (env: {}, argv: CommandArgument) {
     config.devtool = "source-map";
 
     // change typescript config to remove test file from compiles.
-    const ruleset = config.module!.rules[0].use as webpack.RuleSetLoader;
+    const ruleset = config.module!.rules[1].use as webpack.RuleSetLoader;
     (ruleset.options as any).configFile = "tsconfig.build.json";
 
     // add typescript transformation to change alias path

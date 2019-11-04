@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Table1",
+        "position": {
+            "x": 100,
+            "y": 110
+        },
+        "database": "DB1"
+    },
+    {
+        "name": "Table2",
+        "position": {
+            "x": 20,
+            "y": 11
+        },
+        "database": "DB2"
+    },
+    {
+        "name": "Table3",
+        "position": {
+            "x": 160,
+            "y": 31
+        },
+        "database": "DB1"
+    },
+    {
+        "name": "Table4",
+        "position": {
+            "x": 115,
+            "y": 14
+        },
+        "database": "DB2"
+    },
+    {
+        "name": "Table5",
+        "position": {
+            "x": 450,
+            "y": 411
+        },
+        "database": "DB2"
+    }
+]

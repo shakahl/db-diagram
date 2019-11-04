@@ -39,6 +39,8 @@ module.exports = (config: karma.Config) => {
          pattern: "tests/**/*.spec.ts",
       }, {
          pattern: "tests/fixtures/*.{json,html}",
+      }, {
+         pattern: "tests/fixtures/document/*.json",
       }],
       frameworks: ["jasmine"],
       logLevel: config.LOG_ERROR,
@@ -59,13 +61,13 @@ module.exports = (config: karma.Config) => {
          "tests/fixtures/**/*.{json,html}": ["fixtures"],
       },
       reporters: ["spec", "coverage"],
-      singleRun: true,
       webpack: {
          devtool: webpackConfig.devtool,
          module: mod,
          output: webpackConfig.output,
          plugins: webpackConfig.plugins,
          resolve: webpackConfig.resolve,
+         resolveLoader: webpackConfig.resolveLoader,
       },
       webpackMiddleware: {
          stats: "errors-only",

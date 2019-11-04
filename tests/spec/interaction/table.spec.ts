@@ -36,7 +36,7 @@ describe("Table Action", () => {
         expect(hasSelected(table)).toEqual(false);
         const box = table.native.getBoundingClientRect();
         // check if selection class is added
-        await EventSimulation.click(table.native, { x: box.left + 10, y: box.top + 10 });
+        await EventSimulation.click(table.native, { x: box.left + 15, y: box.top + 15 });
         expect(hasSelected(table)).toEqual(true);
 
         await EventSimulation.move(inspectDiagram.diagram.native, window, { x: 10, y: 10 }, { x: 40, y: 100 });

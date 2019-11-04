@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": [
+      "dom",
+      "es2017",
+      "dom.iterable",
+      "scripthost",
+      "webworker"
+    ],
     "module": "commonjs",
     "strict": true,
     "noImplicitAny": false,
@@ -36,14 +43,17 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "plugins": [
-      { "name": "typescript-tslint-plugin" }
+      {
+        "name": "typescript-tslint-plugin"
+      }
     ]
   },
   "include": [
     "src/**/*",
-    "tests/**/*"
+    "tests/**/*",
+    "webpack/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules/**/*"
   ]
 }

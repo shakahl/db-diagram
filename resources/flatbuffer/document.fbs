@@ -1,0 +1,156 @@
+include "types.fbs";
+
+namespace Document;
+
+struct Point {
+  x: float;
+  y: float;
+}
+
+struct Matrix {
+  a: float;
+  b: float;
+  c: float;
+  d: float;
+  e: float;
+  f: float;
+}
+
+table Database {
+  // database id
+  id: ID (required);
+  // database name
+  name: string (required);
+  // database engine name
+  engine: string;
+  // database type
+  type: DatabaseType;
+
+  // list all tables in the databse.
+  tables: [Table];
+  
+  // graphical field
+  matrix: Matrix;
+
+  // UTC timestamp when database was created
+  createdAt: ulong;
+  // UTC timestamp when database last updated
+  lastUpdateAt: ulong;
+}
+
+table Table {
+  // id of table
+  id: ID (required);
+  // table name
+  name: string (required);
+
+  // list of all field inside table.
+  fields: [Field];
+  // list of field id represent primary key. It can be one or more id
+  // as some database allow multiple field indexed as primary key.
+  primaries: [ID];
+  // a list of multiple unique key as a group or individual.
+  uniques: [KeyGroup];
+  // a list of multiple forieng key as a group or individual.
+  foriegns: [KeyGroup];
+
+  // graphical field
+  position: Point;
+
+  // UTC timestamp when database was created
+  createdAt: ulong;
+  // UTC timestamp when database last updated
+  lastUpdateAt: ulong;
+}
+
+table ID {
+  id: [ubyte] (required);
+}
+
+table KeyGroup {
+  ids: [ID];
+  key: ID;
+}
+
+table Field {
+  // a field id unique inside table. It's not guarantee to be unique across
+  // all table inside the databases.
+  id: ID (required);
+  // name of the field
+  name: string (required);
+
+  // field data type
+  type: DataType;
+  // field data type size
+  size: ushort;
+  // represent digit of double of float
+  digit: ubyte;
+  // represet floating point
+  fpoint: ubyte;
+  // field data type additional items. Use for enum data types.
+  items: [string];
+
+  // indicate whether the field is part of primary, unique or foreign key.
+  // by default, the kind is set to normal.
+  kind: FieldKind;
+  // a boolean describe whether the field is a single key field or multiple combined
+  // key field. For example, if kind field set to primary key but the key field is set
+  // to false, that mean the table has multiple field combined to became a primary key.
+  // To get all field that indexed as primary, use list of keys from Tables.
+  key: bool;
+
+  // list of field that has reference to current field.
+  // The utilizeds field is only available when field is a primary field regardless of
+  // multiple indexing field or single indexing field.
+  utilizeds: [UtilizedField];
+  // Describe the origin or source value of the field.
+  // The reference field is only available when field is a foriegn field regardless of
+  // multiple indexing field or single indexing field.
+  reference: ReferenceField;
+
+  // graphical field
+  // order of field in the table. This field is useful on diagram visual and relational
+  // database. NOSQL and other does not really need order.
+  order: ubyte;
+
+  // UTC timestamp when database was created
+  createdAt: ulong;
+  // UTC timestamp when database last updated
+  lastUpdateAt: ulong;
+}
+
+table ReferenceField {
+  // table id where the reference is linked to.
+  origin: ID;
+  // a field id in which the field is refer to in the origin table.
+  source: ID;
+  // indicate whether the relationship is weak or strong. By default, the relationship
+  // use strong relationship when created.
+  // Note: the weak field can be use by the plugin to enforce the striction if the database
+  // engine itself does not supported where any supported database will be add during create
+  // relationship fields.
+  weak: bool;
+  // indicate whether relationship is designed to be embedded object or reference object.
+  // By default, reference value is set to embedded.
+  // Note: the reference field do not have any affect on relational database.
+  reference: bool;
+}
+
+table UtilizedField {
+  // table id where the primary key is mapped to.
+  target: ID;
+  // a field id located in another table as foriegn key field.
+  destination: ID;
+  // indicate whether the relationship is weak or strong. By default, the relationship
+  // use strong relationship when created.
+  // Note: the weak field can be use by the plugin to enforce the striction if the database
+  // engine itself does not supported where any supported database will be add during create
+  // relationship fields.
+  weak: bool;
+  // indicate whether relationship is designed to be embedded object or reference object.
+  // By default, reference value is set to embedded.
+  // Note: the reference field do not have any affect on relational database.
+  reference: bool;
+}
+
+root_type Database;

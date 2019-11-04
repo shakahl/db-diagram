@@ -1,0 +1,42 @@
+[
+    {
+        "name": "name",
+        "type": 14,
+        "size": 100,
+        "kind": 0,
+        "key": false,
+        "order": 2,
+        "database": "DB2",
+        "table": "TB1"
+    },
+    {
+        "name": "description",
+        "type": 16,
+        "size": 100,
+        "kind": 0,
+        "key": false,
+        "order": 4,
+        "database": "DB3",
+        "table": "TB1"
+    },
+    {
+        "name": "credit",
+        "type": 4,
+        "size": 1,
+        "kind": 0,
+        "key": false,
+        "order": 1,
+        "database": "DB3",
+        "table": "TB2"
+    },
+    {
+        "name": "id",
+        "type": 28,
+        "size": 16,
+        "kind": 1,
+        "key": true,
+        "order": 3,
+        "database": "DB1",
+        "table": "TB1"
+    }
+]

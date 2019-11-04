@@ -1,0 +1,53 @@
+[
+    {
+        "name": "name",
+        "type": 15,
+        "size": 40,
+        "kind": 0,
+        "key": false,
+        "order": 1,
+        "database": "DB1",
+        "table": "TB1"
+    },
+    {
+        "name": "age",
+        "type": 3,
+        "size": 1,
+        "kind": 0,
+        "key": false,
+        "order": 2,
+        "database": "DB1",
+        "table": "TB1"
+    },
+    {
+        "name": "sex",
+        "type": 14,
+        "size": 1,
+        "kind": 0,
+        "key": false,
+        "order": 5,
+        "database": "DB1",
+        "table": "TB2"
+    },
+    {
+        "name": "status",
+        "type": 22,
+        "size": 3,
+        "items": ["single", "married", "n/a"],
+        "kind": 0,
+        "key": false,
+        "order": 4,
+        "database": "DB1",
+        "table": "TB2"
+    },
+    {
+        "name": "id",
+        "type": 28,
+        "size": 16,
+        "kind": 1,
+        "key": true,
+        "order": 3,
+        "database": "DB2",
+        "table": "TB1"
+    }
+]
