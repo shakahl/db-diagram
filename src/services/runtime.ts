@@ -19,6 +19,15 @@ const scriptUrl: string = __webpack_public_path__ + "[[script-url]]";
 
 export class DataServiceWorker {
 
+    private static dsw?: DataServiceWorker;
+
+    public static get instance(): DataServiceWorker {
+        if (!this.dsw) {
+            this.dsw = new DataServiceWorker();
+        }
+        return this.dsw!;
+    }
+
     private serviceReg?: ServiceWorkerRegistration;
     private messageListener?: (evt: MessageEvent) => void;
     private eventListeners?: Map<EventType, ListDataEventListener<any>>;

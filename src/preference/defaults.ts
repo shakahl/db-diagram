@@ -1,4 +1,4 @@
-import { Size } from "@db-diagram/elements/utils/types";
+import { Size } from "@db-diagram/services/documents/types";
 import { Visualization } from "@db-diagram/shares/elements";
 
 /**
@@ -58,6 +58,9 @@ export interface FieldSetting {
  * Appearance table setting
  */
 export interface TableSetting {
+   // true if relation should show when table is dragging or moving.
+   showRelationWhileDrag: boolean;
+
    // minimum table size regardless of table name or table field size which is smaller
    // that minimum size.
    minimumSize: Size;
@@ -187,6 +190,7 @@ export function defaultTableSetting(visualization: Visualization): TableSetting 
       maximumSize: { width: 220, height: 680 },
       minimumSize: { width: 120, height: 80 },
       selected: css.getPropertyValue(styles.dbdgTableSelectedColor),
+      showRelationWhileDrag: true,
    };
 }
 

@@ -2,29 +2,29 @@
     {
         "name": "Table",
         "engine": "InnoDB",
-        "additional": "Extra!",
         "fields": [
             {
                 "name": "id",
-                "primary": true,
-                "type": 5
+                "kind": 1,
+                "key": true,
+                "type": 6
             },
             {
                 "name": "name",
-                "type": 12
+                "type": 13
             },
             {
                 "name": "age",
-                "type": 4
+                "type": 3
             },
             {
                 "name": "sex",
-                "type": 13,
-                "typeSize": 1
+                "type": 15,
+                "size": 1
             },
             {
                 "name": "birthday",
-                "type": 16
+                "type": 17
             }
         ]
     }

@@ -3,7 +3,7 @@ import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/hel
 import { calculateBound } from "@db-diagram/tests/helpers/svg";
 
 import { Pointer } from "@db-diagram/elements/pointer";
-import { Point, Size } from "@db-diagram/elements/utils/types";
+import { Point, Size } from "@db-diagram/services/documents/types";
 import { onDomReady } from "@db-diagram/shares/elements";
 
 beforeAll((done) => {

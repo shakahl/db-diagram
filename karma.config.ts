@@ -36,7 +36,7 @@ module.exports = (config: karma.Config) => {
          },
       },
       files: [{
-         pattern: "tests/**/*.spec.ts",
+         pattern: "tests/spec/**/*.spec.ts",
       }, {
          pattern: "tests/fixtures/*.{json,html}",
       }, {

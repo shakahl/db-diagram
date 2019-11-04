@@ -72,7 +72,7 @@ export class DatabaseWorker implements StorageDeclaration<Database> {
 
     public async alterDatabase(database: Database): Promise<ExecResult<Database>> {
         const sw = await StorageWorker.getInstance();
-        return sw.queryById<Database>(this, database.id)
+        return sw.queryById<Database>(this, database.id!)
             .then((dbs) => {
                 if (dbs.reason !== ExecStatus.SUCCESS) {
                     return dbs;
@@ -97,14 +97,14 @@ export class DatabaseWorker implements StorageDeclaration<Database> {
                 if (result.reason !== ExecStatus.SUCCESS) {
                     return result;
                 }
-                return sw.delete<Database>(this, result.data!.id)
+                return sw.delete<Database>(this, result.data!.id!)
                     .then((rs) => {
                         rs.data = result.data;
                         return rs;
                     });
             });
         } else {
-            return sw.delete(this, database.id, true);
+            return sw.delete(this, database.id!, true);
         }
     }
 

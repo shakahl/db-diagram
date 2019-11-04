@@ -1,26 +1,27 @@
 import { Base } from "@db-diagram/elements/base";
 import { Pointer, PointerEvt } from "@db-diagram/elements/pointer";
 import { SelectionListener } from "@db-diagram/elements/state";
-import { Table } from "@db-diagram/elements/table";
+import { TableGraph } from "@db-diagram/elements/table";
 
 import { ApplyViewBox, SvgAttribute, ViewBox } from "@db-diagram/elements/utils/attributes";
-import { DiagramOptions, TableOptions } from "@db-diagram/elements/utils/options";
-import { Point } from "@db-diagram/elements/utils/types";
+import { Point } from "@db-diagram/services/documents/types";
 
 import { PanZoomEventType, WheelData, ZoomEventListener } from "@db-diagram/event/panzoom";
 import { Preference } from "@db-diagram/preference/pref";
 import { onDomReady, Visualization } from "@db-diagram/shares/elements";
+
+import { DataServiceWorker } from "@db-diagram/services/data.service.worker";
+import { Table } from "@db-diagram/services/documents/table";
 
 /**
  * Database diagram class.
  */
 export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
 
-   private tables: Table[] = [];
+   private tables: TableGraph[] = [];
 
    private panEnable: boolean = false;
    private zoomEnable: boolean = false;
-   private diagramOptions: DiagramOptions;
 
    private zoomLevel: number = 1;
    private viewBoxData?: ViewBox;
@@ -34,10 +35,13 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    private diagramHolder: SVGGElement;
 
    private zoomListener?: ZoomEventListener;
-   private tableSelectionChange!: SelectionListener<Table>;
+   private tableSelectionChange!: SelectionListener<TableGraph>;
 
    /** use to prevent dealock call loop */
    private inAction: boolean = false;
+
+   private dataWorker!: DataServiceWorker;
+   private databaseName!: string;
 
    /**
     * Return current ViewBox of the diagram.
@@ -85,14 +89,21 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    }
 
    /**
+    * return name of current database show in diagram
+    */
+   public get database(): string {
+      return this.databaseName;
+   }
+
+   /**
     * Create diagram object.
     */
-   constructor(attr: SvgAttribute = {}, options?: DiagramOptions) {
+   constructor(name: string, attr: SvgAttribute = {}) {
       super(Visualization.createSvgRootElement(), ((a: SvgAttribute): SvgAttribute => {
          a.viewBox = ApplyViewBox(a.viewBox);
          return a;
       })(attr));
-      this.diagramOptions = options || {};
+      this.databaseName = name;
       if (attr && attr.viewBox) {
          this.viewBoxData = attr.viewBox;
       } else {
@@ -103,7 +114,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       this.native.appendChild(this.diagramHolder);
 
       const thisDiagram = this;
-      this.tableSelectionChange = function(this: Table, selected: boolean): void {
+      this.tableSelectionChange = function(this: TableGraph, selected: boolean): void {
          if (selected) { thisDiagram.onTableSelected(this); }
       };
       this.clickEvent(true);
@@ -113,6 +124,8 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       this.native.addEventListener(PanZoomEventType.onPanZoomBegin, (evt) => this.onPanZoomStart(evt as CustomEvent));
       this.native.addEventListener(PanZoomEventType.onPanZoomMove, (evt) => this.onPanZoomMove(evt as CustomEvent));
       this.native.addEventListener(PanZoomEventType.onPanZoomEnd, (evt) => this.onPanZoomEnd(evt as CustomEvent));
+
+      this.dataWorker = DataServiceWorker.instance;
    }
 
    /**
@@ -146,10 +159,6 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       this.viewBoxData = undefined;
       onDomReady(() => {
          const _ = this.viewBox;
-         this.diagramOptions.minZoom = this.diagramOptions.minZoom || this.preference.diagram.minimumZoom;
-         this.diagramOptions.maxZoom = this.diagramOptions.maxZoom || this.preference.diagram.maximumZoom;
-         this.diagramOptions.showMinimap = this.diagramOptions.showMinimap || this.preference.diagram.showMinimap;
-         this.diagramOptions.showZoom = this.diagramOptions.showZoom || this.preference.diagram.showZoom;
       });
       return this;
    }
@@ -236,17 +245,18 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
     * Create or remove table from diagram. If searchOnly is set to true the diagram will not create
     * the table if it's not exist and instead it return undefined.
     *
-    * @param options a table options
+    * @param it a table data or a string represent table name.
     * @param remove boolean indicate whether diagram should remove the table base on the given options.
     * @param searchOnly boolean indicate whether diagram should only search for table.
     */
-   public table(options: TableOptions, remove: boolean = false, searchOnly: boolean = false): Table | undefined {
+   public table(it: string | Table, remove: boolean = false, searchOnly: boolean = false): TableGraph | undefined {
       if (this.inAction) { return undefined; }
 
       let tableIndex = -1;
-      let table: Table | undefined;
+      let table: TableGraph | undefined;
+      const name = typeof it === "string" ? it : it.name;
       for (let i = 0; i < this.tables.length; i++) {
-         if (this.tables[i].name === options.name) {
+         if (this.tables[i].name === name) {
             tableIndex = i;
             table = this.tables[i];
             break;
@@ -257,7 +267,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       if (searchOnly) { return table; }
 
       // return removed table if it existed.
-      if (remove && options) {
+      if (remove && name) {
          if (tableIndex === -1) { return undefined; }
          this.tables.splice(tableIndex, 1);
          try {
@@ -270,7 +280,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       // table with the given name is already existed
       if (tableIndex > -1) { return table; }
 
-      table = new Table(this, options).addSelectionListener(this.tableSelectionChange);
+      table = new TableGraph(this, it as Table).addSelectionListener(this.tableSelectionChange);
       this.tables.push(table);
       return table;
    }
@@ -278,7 +288,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    /**
     * Return a list of iterator of the table.
     */
-   public allTables(): IterableIterator<Table> {
+   public allTables(): IterableIterator<TableGraph> {
       return this.tables.values();
    }
 
@@ -286,7 +296,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
     * Return index of the table. If table not found then -1 is returned.
     * @param table table or table options.
     */
-   public indexOf(input: Table | TableOptions): number {
+   public indexOf(input: TableGraph | Table): number {
       for (let i = 0; i < this.tables.length; i++) {
          if (this.tables[i].name === input.name) {
             return i;
@@ -298,7 +308,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    /**
     * Clear remove all table from diagram. This also remove any relationship that connect to the table.
     */
-   public clear(): Table[] {
+   public clear(): TableGraph[] {
       const clone = this.tables.map((t) => Object.assign({}, t));
       this.tables.forEach((table) => {
          table.detach();
@@ -314,7 +324,7 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    protected onClick(evt: PointerEvt) {
       evt.event!.preventDefault();
       evt.event!.stopPropagation();
-      this.tables.forEach((t: Table) => {
+      this.tables.forEach((t: TableGraph) => {
          t.select(false);
       });
    }
@@ -396,8 +406,8 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    /** Performe zoom matrix calculate */
    private setZoomAmount(amount: number, point: Point, preciseZoomValue?: number) {
       // no need to process, zoom reach minimum and maximum zoom already
-      if ((amount < 1 && this.transformMatrix!.a === this.diagramOptions.minZoom!) ||
-         (amount > 1 && this.transformMatrix!.a === this.diagramOptions.maxZoom!)) { return; }
+      if ((amount < 1 && this.transformMatrix!.a === this.preference.diagram.minimumZoom) ||
+         (amount > 1 && this.transformMatrix!.a === this.preference.diagram.maximumZoom!)) { return; }
 
       const inversedScreenCTM = this.rootSvg!.getScreenCTM()!.inverse();
       const relativeMousePoint = this.toSvgCoordinate(point).matrixTransform(inversedScreenCTM);
@@ -405,12 +415,12 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
       // align amount if zoom exceeded minimum and maximum zoom
       let nextScale = amount * this.transformMatrix!.a;
       let fixToMinMax = false;
-      if (nextScale < this.diagramOptions.minZoom!) {
-         nextScale = this.diagramOptions.minZoom!;
+      if (nextScale < this.preference.diagram.minimumZoom) {
+         nextScale = this.preference.diagram.minimumZoom;
          amount = this.transformMatrix!.a / nextScale;
          fixToMinMax = true;
-      } else if (nextScale > this.diagramOptions.maxZoom!) {
-         nextScale = this.diagramOptions.maxZoom!;
+      } else if (nextScale > this.preference.diagram.maximumZoom) {
+         nextScale = this.preference.diagram.maximumZoom;
          amount = this.transformMatrix!.a / nextScale;
          fixToMinMax = true;
       }
@@ -443,9 +453,9 @@ export class Diagram extends Pointer<SVGSVGElement, SvgAttribute> {
    /**
     * Call when a table is being selected.
     */
-   private onTableSelected(selected: Table): void {
+   private onTableSelected(selected: TableGraph): void {
       if (this.tables) {
-         this.tables.forEach((table: Table) => {
+         this.tables.forEach((table: TableGraph) => {
             if (table !== selected) {
                table.select(false);
             }

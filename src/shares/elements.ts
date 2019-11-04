@@ -1,12 +1,13 @@
 import { noQuote } from "@db-diagram/@extensions/strings";
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import icons from "@db-diagram/assets/icons";
 import styles from "@db-diagram/assets/styles/style-dark.scss";
 import { Base } from "@db-diagram/elements/base";
 import {
     applyAttribute, getAttributeNumber, PathAttribute, TextAttribute, UseAttribute,
 } from "@db-diagram/elements/utils/attributes";
-import { FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
-import { Box, DataType } from "@db-diagram/elements/utils/types";
+import { Box } from "@db-diagram/elements/utils/box";
+import { Field } from "@db-diagram/services/documents/field";
 
 /**
  * add custom properties to hold visualization object. This field is only used
@@ -112,7 +113,7 @@ export class Visualization {
     public static findCustomRootElement(node: Node): Document | DocumentFragment | undefined {
         if (node.parentNode) {
             return this.findCustomRootElement(node.parentNode);
-        } else if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ) {
+        } else if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
             return node as DocumentFragment;
         } else {
             return undefined;
@@ -125,8 +126,9 @@ export class Visualization {
     private static tableFieldpadding = { left: 6, right: 6, top: 4, bottom: 4 };
     private static space = 20;
 
-    private static getFieldOptionsKind(options: FieldOptions): string {
-        return options.primary ? "primary" : options.foreign ? "foreign" : options.unique ? "unique" : "name";
+    private static getFieldKindSelector(field: Field): string {
+        return field.kind !== undefined && field.kind !== binary.FieldKind.Normal ?
+            binary.FieldKind[field.kind!].toLowerCase() : "name";
     }
 
     /** Return text padding that use for all text inside table. */
@@ -147,7 +149,7 @@ export class Visualization {
     /** Return table footer height */
     public get tableFooterHeight(): number {
         if (this.footerHeight === 0) {
-            this.footerHeight = this.getTableFooterSize({ name: "", engine: "Unknown" }).height;
+            this.footerHeight = this.getTableFooterSize().height;
         }
         return this.footerHeight;
     }
@@ -215,7 +217,7 @@ export class Visualization {
         });
         // compute table element height
         this.headerHeight = this.getTableHeaderSize().height;
-        this.footerHeight = this.getTableFooterSize({ name: "", engine: "Unknown" }).height;
+        this.footerHeight = this.getTableFooterSize().height;
         this.fieldHeight = this.getTableFieldSize().height;
 
         this.fieldIconWidth = this.iconsSize.get(icons.foriegnKeyIcon)!.editable()
@@ -275,10 +277,9 @@ export class Visualization {
      * to get text footer height.
      * @param options table options.
      */
-    public getTableFooterSize(options: TableOptions): Box {
-        const engineSize = new Box(this.getTableFooterTextSize(options.engine)).editable();
-        const additionalSize = this.getTableFooterTextSize(options.additional);
-        return engineSize.extend(additionalSize, true).padding(Visualization.TableTextPadding, true);
+    public getTableFooterSize(engine: string = "Unknown"): Box {
+        const engineSize = new Box(this.getTableFooterTextSize(engine)).editable();
+        return engineSize.padding(Visualization.TableTextPadding, true);
     }
 
     /**
@@ -298,17 +299,15 @@ export class Visualization {
      * Return table field size. It is include the size of icon, text plus the padding space.
      */
     public getTableFieldSize(): Box {
-        const opts = { name: "DB", type: DataType.Int, typeRaw: "INT" } as FieldOptions;
+        const field = { name: "Field", type: binary.DataType.Int } as Field;
         const size = this.getIconsElementSize(icons.primaryKeyIcon).editable();
-        size.extend(this.getTableTextFieldVariableSize(opts), true).extend(this.getTableTextFieldTypeSize(opts), true);
-        opts.primary = true;
+        size.extend(this.getTableTextFieldVariableSize(field), true)
+            .extend(this.getTableTextFieldTypeSize(field), true);
+        field.kind = binary.FieldKind.Primary;
         size.extend(this.getIconsElementSize(icons.primaryKeyIcon), true);
-        opts.primary = false;
-        opts.foreign = true;
+        field.kind = binary.FieldKind.Foriegn;
         size.extend(this.getIconsElementSize(icons.foriegnKeyIcon), true);
-        opts.primary = false;
-        opts.foreign = false;
-        opts.unique = true;
+        field.kind = binary.FieldKind.Unique;
         size.extend(this.getIconsElementSize(icons.uniqueKeyIcon), true);
         return size.padding(Visualization.TableFieldPadding, true);
     }
@@ -317,9 +316,9 @@ export class Visualization {
      * Return table field text size base the field options.
      * @param options field option
      */
-    public getTableTextFieldVariableSize(options: FieldOptions): SVGRect {
-        const fieldKind = Visualization.getFieldOptionsKind(options);
-        return this.measureText(options.name, {
+    public getTableTextFieldVariableSize(field: Field): SVGRect {
+        const fieldKind = Visualization.getFieldKindSelector(field);
+        return this.measureText(field.name, {
             fontFamily: this.readOnlyElementStyle().getPropertyValue(`--dbdg-field-text-${fieldKind}-font-family`),
             fontSize: this.readOnlyElementStyle().getPropertyValue(`--dbdg-field-text-${fieldKind}-font-size`),
             fontStyle: this.readOnlyElementStyle().getPropertyValue(`--dbdg-field-text-${fieldKind}-font-style`),
@@ -331,8 +330,9 @@ export class Visualization {
      * Return table field text size of a string represent type of the field.
      * @param options field option
      */
-    public getTableTextFieldTypeSize(options: FieldOptions): SVGRect {
-        return this.measureText(options.typeRaw!, {
+    public getTableTextFieldTypeSize(field: Field): SVGRect {
+        const typeRaw = binary.DataType[field.type].toUpperCase();
+        return this.measureText(typeRaw, {
             fontFamily: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontFamily),
             fontSize: this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontSize),
             fontStyle: noQuote(this.readOnlyElementStyle().getPropertyValue(styles.dbdgFieldTextTypeFontStyle)),

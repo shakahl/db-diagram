@@ -2,14 +2,14 @@ import { EventSimulation } from "@db-diagram/tests/helpers/events";
 import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/helper";
 import { calculateFinalCoordinate } from "@db-diagram/tests/helpers/svg";
 
-import { Table } from "@db-diagram/elements/table";
-import { Point, Size } from "@db-diagram/elements/utils/types";
+import { TableGraph } from "@db-diagram/elements/table";
+import { Point, Size } from "@db-diagram/services/documents/types";
 import { onDomReady, Visualization } from "@db-diagram/shares/elements";
 
 const styles = Visualization.getInstance().getStylesDts();
 let inspectDiagram: DiagramFixtures;
 
-const hasSelected = (table: Table) => {
+const hasSelected = (table: TableGraph) => {
     return table.native.hasAttribute("class") &&
         table.native.getAttribute("class")!.includes(styles.selected);
 };
@@ -29,10 +29,10 @@ describe("Table Action", () => {
     });
 
     it("Selection", async () => {
-        inspectDiagram.tables[0].table.x(200).y(20);
-        inspectDiagram.tables[1].table.x(100).y(350);
+        inspectDiagram.tables[0].tableGraph.x(200).y(20);
+        inspectDiagram.tables[1].tableGraph.x(100).y(350);
 
-        const table = inspectDiagram.tables[0].table;
+        const table = inspectDiagram.tables[0].tableGraph;
         expect(hasSelected(table)).toEqual(false);
         const box = table.native.getBoundingClientRect();
         // check if selection class is added
@@ -47,14 +47,14 @@ describe("Table Action", () => {
             inspectDiagram.diagram.native,
             { x: box.left + box.width + 10, y: box.top + box.height + 10 });
         expect(hasSelected(table)).toEqual(false);
-    });
+    }, 1000);
 
     it("Move", async () => {
-        const table = inspectDiagram.tables[0].table;
+        const table = inspectDiagram.tables[0].tableGraph;
         expect(table.isDraggable()).toEqual(true);
         const tableBox = table.native.getBBox();
 
-        const verifyPos = async (t: Table, moveP1: Point, moveP2: Point, expected: Point, tbSize: Size) => {
+        const verifyPos = async (t: TableGraph, moveP1: Point, moveP2: Point, expected: Point, tbSize: Size) => {
             await EventSimulation.move(t.native, t.native, moveP1, moveP2);
             const matrix = (t as any).transformMatrix as DOMMatrix;
             expect(matrix).toBeTruthy();
@@ -79,7 +79,7 @@ describe("Table Action", () => {
         table.draggable(false);
         await verifyPos(table, { x: 10, y: 30 }, { x: 100, y: 130 }, { x: 0, y: 20 }, size);
 
-        const table1 = inspectDiagram.tables[1].table;
+        const table1 = inspectDiagram.tables[1].tableGraph;
         const tableBox1 = table1.native.getBBox();
         const size1 = { width: tableBox1.width, height: tableBox1.height };
         await verifyPos(table1, { x: 10, y: 10 }, { x: 210, y: 50 }, { x: 200, y: 40 }, size1);
@@ -112,10 +112,10 @@ describe("Table Action", () => {
         await verifyPos(table1, p1, p2, fp, size1);
         expect(table1.x(true)).toEqual(fp.x);
         expect(table1.y(true)).toEqual(fp.y);
-    });
+    }, 10000);
 
     it("Coordinate", () => {
-        const table = inspectDiagram.tables[0].table;
+        const table = inspectDiagram.tables[0].tableGraph;
         const oriBound = table.native.getBoundingClientRect();
         table.x(100).y(80);
         expect(table.x()).toEqual(100);

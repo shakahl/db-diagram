@@ -1,8 +1,7 @@
 import { Base } from "@db-diagram/elements/base";
 import { Diagram } from "@db-diagram/elements/diagram";
 import { GlobalAttribute } from "@db-diagram/elements/utils/attributes";
-import { Point } from "@db-diagram/elements/utils/types";
-import e = require("express");
+import { Point } from "@db-diagram/services/documents/types";
 
 /**
  * Add custom properties to a window object to reference to diagram object.

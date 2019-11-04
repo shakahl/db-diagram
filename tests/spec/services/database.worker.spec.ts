@@ -1,6 +1,6 @@
 import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 
-import { Document } from "@db-diagram/@gen/document/types_generated";
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { DatabaseWorker } from "@db-diagram/services/database.worker";
 import { Database } from "@db-diagram/services/documents/database";
 import { ExecStatus, StorageWorker } from "@db-diagram/services/storage.worker";
@@ -18,7 +18,7 @@ describe("Database worker", () => {
                 a: 1, b: 0, c: 0, d: 1, e: 0, f: 0,
             },
             name: "Test",
-            type: Document.DatabaseType.RDMS,
+            type: binary.DatabaseType.RDMS,
         } as Database;
         databaseWorker = new DatabaseWorker();
         const result = await databaseWorker.createDatabase(database);
@@ -44,14 +44,14 @@ describe("Database worker", () => {
         const results = await databaseWorker.showDatabases();
         expect(results.data!.length).toEqual(databases.data.length);
         results.data!.forEach((db) => {
-            expect(db).withContext(`name "${db.name}" not matched.`).toEqual(dbmap.get(db.id)!);
+            expect(db).withContext(`name "${db.name}" not matched.`).toEqual(dbmap.get(db.id!)!);
         });
     };
 
     const mappingDatabaseWithID = (): Map<string, Database> => {
         const dbmap = new Map<string, Database>();
         databases.data.forEach((db) => {
-            dbmap.set(db.id, db);
+            dbmap.set(db.id!, db);
         });
         return dbmap;
     };
@@ -59,7 +59,7 @@ describe("Database worker", () => {
     it("create/query", async () => {
         expect(database.id).toBeTruthy();
         expect(typeof database.id).toEqual("string");
-        expect(database.id.length).toEqual(22); // base64 of 16 bytes with padding
+        expect(database.id!.length).toEqual(22); // base64 of 16 bytes with padding
 
         const results = await databaseWorker.showDatabases();
         expect(results).toBeTruthy();
@@ -122,7 +122,7 @@ describe("Database worker", () => {
         expect(alterResult.reason).toEqual(ExecStatus.SUCCESS);
         expect(alterResult.data).toEqual(results.data![0]);
 
-        const dbs = await databaseWorker.getDatabase(database.id);
+        const dbs = await databaseWorker.getDatabase(database.id!);
         expect(dbs).toBeTruthy();
         expect(dbs.reason).toEqual(ExecStatus.SUCCESS);
         expect(dbs.data).toBeTruthy();
@@ -140,7 +140,7 @@ describe("Database worker", () => {
                 a: 1, b: 0, c: 0, d: 1, e: 0, f: 0,
             },
             name: "DB-Test",
-            type: Document.DatabaseType.RDMS,
+            type: binary.DatabaseType.RDMS,
         } as Database;
         const expectReason = [ExecStatus.ID_REQUIRED, ExecStatus.NAME_EXIST];
         for (const status of expectReason) {
@@ -163,7 +163,7 @@ describe("Database worker", () => {
         const newDB1 = {
             engine: "Test",
             name: "DB1",
-            type: Document.DatabaseType.RDMS,
+            type: binary.DatabaseType.RDMS,
         } as Database;
         await databaseWorker.createDatabase(newDB1);
         result = await databaseWorker.showDatabases();

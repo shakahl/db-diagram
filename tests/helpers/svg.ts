@@ -1,5 +1,5 @@
 import { Diagram } from "@db-diagram/elements/diagram";
-import { Point } from "@db-diagram/elements/utils/types";
+import { Point } from "@db-diagram/services/documents/types";
 
 declare global {
     interface Element {

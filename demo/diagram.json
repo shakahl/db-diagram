@@ -2,97 +2,97 @@
     {
         "name": "Student",
         "engine": "InnoDB",
-        "additional": "Extra!",
         "fields": [
             {
                 "name": "id",
-                "primary": true,
-                "type": 5
+                "kind": 1,
+                "key": true,
+                "type": 6
             },
             {
                 "name": "name",
-                "type": 12
+                "type": 13
             },
             {
                 "name": "age",
-                "type": 3
+                "type": 4
             },
             {
                 "name": "gender",
-                "type": 13,
+                "type": 15,
                 "typeSize": 1
             },
             {
                 "name": "birthday",
-                "type": 16
+                "type": 17
             },
             {
                 "name": "updatedAt",
-                "type": 16
+                "type": 17
             },
             {
                 "name": "createdAt",
-                "type": 16
+                "type": 17
             }
         ]
     },
     {
         "name": "Test",
         "engine": "InnoDB",
-        "additional": "Extra!",
         "fields": [
             {
                 "name": "id",
-                "primary": true,
-                "type": 5
+                "kind": 1,
+                "key": true,
+                "type": 6
             },
             {
                 "name": "score",
-                "type": 3
+                "type": 4
             },
             {
                 "name": "at",
-                "type": 16
+                "type": 17
             },
             {
                 "name": "updatedAt",
-                "type": 16
+                "type": 17
             },
             {
                 "name": "createdAt",
-                "type": 16
+                "type": 17
             }
         ]
     },
     {
         "name": "Course",
         "engine": "InnoDB",
-        "additional": "Extra!",
         "fields": [
             {
                 "name": "id",
-                "primary": true,
-                "type": 5
+                "kind": 1,
+                "key": true,
+                "type": 6
             },
             {
                 "name": "Subject",
-                "type": 12
+                "type": 13
             },
             {
                 "name": "Credit",
-                "type": 3
+                "type": 4
             },
             {
                 "name": "Hours",
-                "type": 3
+                "type": 4
             },
             {
                 "name": "updatedAt",
-                "type": 16
+                "type": 17
             },
             {
                 "name": "createdAt",
-                "type": 16
+                "type": 17
             }
         ]
     }

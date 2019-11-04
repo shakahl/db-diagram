@@ -1,6 +1,6 @@
 include "types.fbs";
 
-namespace Document;
+namespace binary;
 
 struct Point {
   x: float;
@@ -18,7 +18,7 @@ struct Matrix {
 
 table Database {
   // database id
-  id: ID (required);
+  id: string (required);
   // database name
   name: string (required);
   // database engine name
@@ -40,7 +40,7 @@ table Database {
 
 table Table {
   // id of table
-  id: ID (required);
+  id: string (required);
   // table name
   name: string (required);
 
@@ -48,7 +48,7 @@ table Table {
   fields: [Field];
   // list of field id represent primary key. It can be one or more id
   // as some database allow multiple field indexed as primary key.
-  primaries: [ID];
+  primaries: [string];
   // a list of multiple unique key as a group or individual.
   uniques: [KeyGroup];
   // a list of multiple forieng key as a group or individual.
@@ -63,19 +63,15 @@ table Table {
   lastUpdateAt: ulong;
 }
 
-table ID {
-  id: [ubyte] (required);
-}
-
 table KeyGroup {
-  ids: [ID];
-  key: ID;
+  ids: [string];
+  key: string;
 }
 
 table Field {
   // a field id unique inside table. It's not guarantee to be unique across
   // all table inside the databases.
-  id: ID (required);
+  id: string (required);
   // name of the field
   name: string (required);
 
@@ -121,9 +117,9 @@ table Field {
 
 table ReferenceField {
   // table id where the reference is linked to.
-  origin: ID;
+  origin: string;
   // a field id in which the field is refer to in the origin table.
-  source: ID;
+  source: string;
   // indicate whether the relationship is weak or strong. By default, the relationship
   // use strong relationship when created.
   // Note: the weak field can be use by the plugin to enforce the striction if the database
@@ -138,9 +134,9 @@ table ReferenceField {
 
 table UtilizedField {
   // table id where the primary key is mapped to.
-  target: ID;
+  target: string;
   // a field id located in another table as foriegn key field.
-  destination: ID;
+  destination: string;
   // indicate whether the relationship is weak or strong. By default, the relationship
   // use strong relationship when created.
   // Note: the weak field can be use by the plugin to enforce the striction if the database

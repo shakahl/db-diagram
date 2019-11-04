@@ -1,4 +1,4 @@
-import { Point } from "@db-diagram/elements/utils/types";
+import { Point } from "@db-diagram/services/documents/types";
 
 interface EventCallback {
     progress: (fragtion: number) => boolean;

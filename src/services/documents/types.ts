@@ -16,8 +16,31 @@ export interface Matrix {
  * A group that contain a key and list of ids.
  */
 export interface KeyGroup {
-    ids: Uint8Array[];
+    ids: string[];
     key: string;
+}
+
+/**
+ * Type alias which represent length type value in SVG space.
+ */
+export type LengthNumericType = number | LengthType;
+
+/**
+ * Type alias which represent length value in SVG space.
+ */
+export type LengthType = "string";
+
+/**
+ * Type represent size of the object.
+ */
+export interface Size { width: number; height: number; }
+
+/**
+ * Object represent field axis coordinate left and right relative SVG root coordinate.
+ */
+export interface FieldCoordinate {
+   left: Point;
+   right: Point;
 }
 
 /**
@@ -33,8 +56,8 @@ export interface Point {
  * to better know which table has been using this primary field.
  */
 export interface UtilizedField {
-    target: Uint8Array;
-    destination: Uint8Array;
+    target: string;
+    destination: string;
     weak?: boolean;
     reference?: boolean;
 }
@@ -43,8 +66,8 @@ export interface UtilizedField {
  * An object define where the original field is.
  */
 export interface ReferenceField {
-    origin: Uint8Array;
-    source: Uint8Array;
+    origin: string;
+    source: string;
     weak?: boolean;
     reference?: boolean;
 }

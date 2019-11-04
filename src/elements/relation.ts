@@ -1,8 +1,10 @@
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { Base } from "@db-diagram/elements/base";
 import { Diagram } from "@db-diagram/elements/diagram";
+import { TableGraph } from "@db-diagram/elements/table";
 import { applyAttribute, GlobalAttribute } from "@db-diagram/elements/utils/attributes";
-import { FieldOptions, RelationshipOptions } from "@db-diagram/elements/utils/options";
-import { Point } from "@db-diagram/elements/utils/types";
+import { Field } from "@db-diagram/services/documents/field";
+import { Point } from "@db-diagram/services/documents/types";
 import { Visualization } from "@db-diagram/shares/elements";
 
 /**
@@ -10,8 +12,9 @@ import { Visualization } from "@db-diagram/shares/elements";
  */
 export class Relation extends Base<SVGGElement, GlobalAttribute> {
 
-   private foriegnField: FieldOptions;
-   private options: RelationshipOptions;
+   private foreignField: Field;
+   private primaryTable: TableGraph;
+   private foreignTable: TableGraph;
 
    private path: SVGPathElement;
    private many!: SVGUseElement;
@@ -19,7 +22,7 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
 
    private parent: Diagram;
 
-   constructor(parent: Diagram, options: RelationshipOptions) {
+   constructor(parent: Diagram, pTable: TableGraph, fTable: TableGraph, field?: Field) {
       super(Base.createElement("g"));
       this.parent = parent;
 
@@ -27,35 +30,39 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
       const styles = visual.getStylesDts();
       const icons = visual.getIconsDts();
 
-      this.options = options;
-      this.options.line = this.options.line || parent.preference.relationship.useStraightLine;
-
       applyAttribute(this.native, { class: styles.relation });
 
-      if (options.foreignField === undefined) {
+      if (field === undefined) {
          try {
-            const pfield = options.primaryTable.primaryField();
-            const tname = options.primaryTable.name.toLowerCase().replace(" ", "_");
-            options.foreignField = {
-               foreign: true,
-               name: `${tname}_${pfield.name}`,
+            const pfield = pTable.primaryField();
+            const tname = pTable.name.toLowerCase().replace(" ", "_");
+            field = {
+               database: parent.database,
+               digit: pfield.digit,
+               fpoint: pfield.fpoint,
+               items: pfield.items,
+               key: true,
+               kind: binary.FieldKind.Foriegn,
+               name: `${tname}_id`,
+               size: pfield.size,
+               table: fTable.name,
                type: pfield.type,
-               typeRaw: pfield.typeRaw,
-               typeSize: pfield.typeSize,
-            } as FieldOptions;
+            };
          } catch (e) {
             throw e;
          }
       }
-      this.foriegnField = options.foreignField;
-      this.options.foreignTable.addField(options.foreignField!);
+      this.foreignField = field;
+      fTable.addField(this.foreignField!);
 
-      this.options.primaryTable.primaryRelation(this);
-      this.options.foreignTable.foriegnRelation(this, this.foriegnField);
+      pTable.primaryRelation(this);
+      fTable.foriegnRelation(this, this.foreignField);
 
       this.path = Base.createElement("path");
       let clazz = styles.line;
-      if (this.options.weak) { clazz += ` ${styles.weak}`; }
+      if (this.foreignField.reference && this.foreignField.reference.weak) {
+         clazz += ` ${styles.weak}`;
+      }
       this.native.appendChild(applyAttribute(this.path, { class: clazz }));
 
       this.many = Visualization.createReferencePathIcon(icons.many);
@@ -64,8 +71,11 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
       this.native.appendChild(applyAttribute(this.many, { class: styles.many }));
       this.native.appendChild(applyAttribute(this.pone, { class: styles.one }));
 
-      this.options.foreignTable.front();
-      this.options.primaryTable.front();
+      pTable.front();
+      fTable.front();
+
+      this.primaryTable = pTable;
+      this.foreignTable = fTable;
 
       this.render().attach(parent);
    }
@@ -87,8 +97,8 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
     * Create path line data to connect 2 tables.
     */
    public render(): this {
-      const pBox = this.options.primaryTable.box();
-      const fBox = this.options.foreignTable.box();
+      const pBox = this.primaryTable.box();
+      const fBox = this.foreignTable.box();
 
       const l1 = pBox.x;
       const l2 = fBox.x;
@@ -108,8 +118,8 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
       const manyMidX = (manySize.width / 2);
 
       if (r1 < l2 || r2 < l1) {  // in between table
-         const pL = this.options.primaryTable.primaryFieldCoordinate();
-         const fL = this.options.foreignTable.fieldCoordinate(this.options.foreignTable.fieldIndex(this.foriegnField));
+         const pL = this.primaryTable.primaryFieldCoordinate();
+         const fL = this.foreignTable.fieldCoordinate(this.foreignTable.fieldIndex(this.foreignField!));
 
          if (Math.abs(r1 - l2) < Math.abs(r2 - l1)) {
             p1 = pL.right;
@@ -125,13 +135,13 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
             });
          }
 
-         const str = this.options.line ?
+         const str = this.parent.preference.relationship.useStraightLine ?
             this.generateLineCurveInBetween(p1, p2) : this.generateCurveInBetween(p1, p2);
          applyAttribute(this.path, { d: str });
 
       } else {
-         const pL = this.options.primaryTable.primaryFieldCoordinate();
-         const fL = this.options.foreignTable.fieldCoordinate(this.options.foreignTable.fieldIndex(this.foriegnField));
+         const pL = this.primaryTable.primaryFieldCoordinate();
+         const fL = this.foreignTable.fieldCoordinate(this.foreignTable.fieldIndex(this.foreignField));
 
          let right = false;
          if (Math.abs(l1 - l2) < Math.abs(r1 - r2)) {
@@ -149,7 +159,7 @@ export class Relation extends Base<SVGGElement, GlobalAttribute> {
             applyAttribute(this.many, { transform: `translate(${p2.x - manySize.width}, ${p2.y - manyMidY})` });
          }
 
-         const str = this.options.line ?
+         const str = this.parent.preference.relationship.useStraightLine ?
             this.generateLineCurveSameSide(p1, p2, right) : this.generateCurveSameSide(p1, p2, right);
          applyAttribute(this.path, { d: str });
 

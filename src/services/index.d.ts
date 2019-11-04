@@ -3,18 +3,22 @@ import { AnyEventMap, Data, DataEventListener, Request } from "@db-diagram/servi
 declare module "@db-diagram/services/data.service.worker" {
 
     export interface ServiceWorkerOptions {
-        scope: string
+        scope: string;
     }
 
     export class DataServiceWorker {
 
-        register(options?: ServiceWorkerOptions): Promise<ServiceWorkerRegistration>;
+        public static instance: DataServiceWorker;
 
-        addEventListener<K extends keyof AnyEventMap>(type: K, listener: DataEventListener<AnyEventMap[K]>): void;
+        public register(options?: ServiceWorkerOptions): Promise<ServiceWorkerRegistration>;
 
-        removeventListener<K extends keyof AnyEventMap>(type: K, listener: DataEventListener<AnyEventMap[K]>): void;
+        public addEventListener<K extends keyof AnyEventMap>(type: K,
+                                                             listener: DataEventListener<AnyEventMap[K]>): void;
 
-        post<T extends Data>(request: Request<T>): Promise<T>;
+        public removeventListener<K extends keyof AnyEventMap>(type: K,
+                                                               listener: DataEventListener<AnyEventMap[K]>): void;
+
+        public post<T extends Data>(request: Request<T>): Promise<T>;
 
     }
 }

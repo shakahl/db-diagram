@@ -1,8 +1,9 @@
 import "@db-diagram/@extensions/strings";
 import { Diagram } from "@db-diagram/elements/diagram";
-import { Table } from "@db-diagram/elements/table";
+import { TableGraph } from "@db-diagram/elements/table";
 import { ParseViewBox, ViewBox } from "@db-diagram/elements/utils/attributes";
-import { FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
+import { Field } from "@db-diagram/services/documents/field";
+import { Table } from "@db-diagram/services/documents/table";
 import { loadFixtures } from "./karma";
 
 /**
@@ -21,33 +22,33 @@ export function loadAttributeFixture(name: string) {
  */
 export interface DiagramFixtures {
     diagram: Diagram;
-    tables: Array<{ opt: TableOptions, fields: FieldOptions[], table: Table }>;
+    tables: Array<{ table: Table, fields: Field[], tableGraph: TableGraph }>;
     cleanup: () => void;
 }
 
 /** */
-interface FixtureTableOptions extends TableOptions {
-    fields: FieldOptions[];
+interface FixtureTable extends Table {
+    fields: Field[];
 }
 
 /**
  *
  */
-export function loadTableFixture(optName: string): DiagramFixtures {
-    const opts = loadFixtures<FixtureTableOptions[]>(optName);
+export function loadTableFixture(tableName: string): DiagramFixtures {
+    const tbs = loadFixtures<FixtureTable[]>(tableName);
     const absContainer = loadFixtures<HTMLDivElement>("abscontainer.html");
-    const diagram = new Diagram();
+    const diagram = new Diagram("sample");
     diagram.attach(absContainer.data);
     const df: DiagramFixtures = { cleanup: () => {
         diagram.detach();
         absContainer.reset!.call(absContainer);
     }, diagram, tables: []};
-    opts.data.forEach((tbOpt) => {
-        const fields = tbOpt.fields;
-        delete tbOpt.fields;
-        const table = diagram.table(tbOpt)!;
-        fields.forEach((field) => { table.addField(field); });
-        df.tables!.push({ opt: tbOpt, fields, table });
+    tbs.data.forEach((tb) => {
+        const fields = tb.fields;
+        delete tb.fields;
+        const tableGraph = diagram.table(tb)!;
+        fields.forEach((field) => { tableGraph.addField(field); });
+        df.tables.push({ fields, table: tb, tableGraph });
     });
     return df;
 }

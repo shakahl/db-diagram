@@ -2,11 +2,12 @@ import { loadAttributeFixture, loadAttributeFrom } from "@db-diagram/tests/helpe
 import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 
 import { Diagram } from "@db-diagram/elements/diagram";
-import { Table } from "@db-diagram/elements/table";
-import { TableOptions } from "@db-diagram/elements/utils/options";
+import { TableGraph } from "@db-diagram/elements/table";
+import { Table } from "@db-diagram/services/documents/table";
 import { onDomReady } from "@db-diagram/shares/elements";
 
 let htmlFixture: Fixture<HTMLElement>;
+const dbName = "sample";
 
 // wait for dom to finish before starting test
 beforeAll((done) => {
@@ -24,7 +25,7 @@ describe("Diagram", () => {
    });
 
    it("create", () => {
-      const diagram = new Diagram();
+      const diagram = new Diagram(dbName);
       diagram.attach(document.body);
       expect(diagram).toBeTruthy();
       expect(diagram.native).toBeTruthy();
@@ -41,7 +42,7 @@ describe("Diagram", () => {
 
    it("create with id", () => {
       const id = htmlFixture.data.getAttribute("id")!;
-      const diagram = new Diagram({ id });
+      const diagram = new Diagram(dbName, { id });
       diagram.attach(`#${id}`);
       expect(diagram).toBeTruthy();
       expect(diagram.native).toBeTruthy();
@@ -58,14 +59,14 @@ describe("Diagram", () => {
    });
 
    it("attach", () => {
-      const diagram1 = new Diagram();
+      const diagram1 = new Diagram(dbName);
       diagram1.attach(`#${htmlFixture.data.getAttribute("id")!}`);
       expect(htmlFixture.data.childElementCount).toBe(1);
       expect(htmlFixture.data.children[0].tagName).toBe("svg");
       expect(htmlFixture.data.children[0]).toBe(diagram1.native);
       diagram1.detach();
 
-      const diagram2 = new Diagram();
+      const diagram2 = new Diagram(dbName);
       diagram2.attach(htmlFixture.data.getAttribute("id")!);
       expect(htmlFixture.data.childElementCount).toBe(1);
       expect(htmlFixture.data.children[0].tagName).toBe("svg");
@@ -74,23 +75,23 @@ describe("Diagram", () => {
    });
 
    it("verify attribute", () => {
-      const opt = loadAttributeFixture("svg.attr.json");
-      const diagram = new Diagram(opt);
+      const expectedAttr = loadAttributeFixture("svg.attr.json");
+      const diagram = new Diagram(expectedAttr, expectedAttr);
       diagram.attach(htmlFixture.data);
-      const attrs = loadAttributeFrom(diagram.native);
+      const attr = loadAttributeFrom(diagram.native);
       // remove function toString as we only care about properties
-      delete opt.viewBox.toString;
-      delete attrs.viewBox!.toString;
-      expect(attrs).toEqual(opt);
+      delete expectedAttr.viewBox.toString;
+      delete attr.viewBox!.toString;
+      expect(attr).toEqual(expectedAttr);
       diagram.detach();
    });
 
    it("create table", () => {
       const opt = loadAttributeFixture("svg.attr.json");
-      const diagram = new Diagram(opt);
+      const diagram = new Diagram(dbName, opt);
       diagram.attach(htmlFixture.data);
 
-      const verify = (table: Table, tbOpt: TableOptions, childCount: number, index: number) => {
+      const verify = (table: TableGraph, tbOpt: Table, childCount: number, index: number) => {
          expect(table).toBeTruthy();
          expect(table.native).toBeTruthy();
          expect(table.native).toBeTruthy();
@@ -102,15 +103,15 @@ describe("Diagram", () => {
          expect(diagram.indexOf(table)).toEqual(index);
       };
 
-      const tbOpt1: TableOptions = { name: "Table1" };
+      const tbOpt1: Table = { name: "Table1", database: dbName };
       const tb1 = diagram.table(tbOpt1);
       verify(tb1!, tbOpt1, 1, 0);
 
-      const tbOpt2: TableOptions = { name: "Table2" };
+      const tbOpt2: Table = { name: "Table2", database: dbName };
       const tb2 = diagram.table(tbOpt2);
       verify(tb2!, tbOpt2, 2, 1);
 
-      const tbOpt3: TableOptions = { name: "Table3" };
+      const tbOpt3: Table = { name: "Table3", database: dbName };
       const tb3 = diagram.table(tbOpt3);
       verify(tb3!, tbOpt3, 3, 2);
 

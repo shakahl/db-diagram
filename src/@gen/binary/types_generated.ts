@@ -3,7 +3,7 @@
 /**
  * @enum {number}
  */
-export namespace Document{
+export namespace binary{
 export enum DataType{
   Unknown= 0,
   Number= 1,
@@ -47,7 +47,7 @@ export enum DataType{
 /**
  * @enum {number}
  */
-export namespace Document{
+export namespace binary{
 export enum DatabaseType{
   RDMS= 0,
   NOSQL= 1,
@@ -57,11 +57,31 @@ export enum DatabaseType{
 /**
  * @enum {number}
  */
-export namespace Document{
+export namespace binary{
 export enum FieldKind{
   Normal= 0,
   Primary= 1,
   Unique= 2,
   Foriegn= 3
+}};
+
+/**
+ * @enum {number}
+ */
+export namespace binary{
+export enum DatabaseEngine{
+  Unknown= 0,
+  MySQL= 1,
+  MariaDB= 2,
+  Oracle= 3,
+  MSSQL= 4,
+  MongoDB= 5,
+  SQLite= 6,
+  PostgreSQL= 7,
+  Cassandra= 8,
+  CockroachDB= 9,
+  CUBRID= 10,
+  Couchbase= 11,
+  Neo4J= 12
 }};
 

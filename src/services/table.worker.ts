@@ -77,7 +77,7 @@ export class TableWorker implements StorageDeclaration<Table> {
 
     public async alterTable(table: Table): Promise<ExecResult<Table>> {
         const sw = await StorageWorker.getInstance();
-        return sw.queryById<Table>(this, table.id).then((tbs) => {
+        return sw.queryById<Table>(this, table.id!).then((tbs) => {
             if (tbs.reason !== ExecStatus.SUCCESS) {
                 return tbs;
             }
@@ -104,14 +104,14 @@ export class TableWorker implements StorageDeclaration<Table> {
                 if (tbs.reason !== ExecStatus.SUCCESS) {
                     return tbs;
                 }
-                return sw.delete<Table>(this, tbs.data!.id)
+                return sw.delete<Table>(this, tbs.data!.id!)
                     .then((rs) => {
                         rs.data = tbs.data;
                         return rs;
                     });
             });
         } else {
-            return sw.delete(this, (it as Table).id, true);
+            return sw.delete(this, (it as Table).id!, true);
         }
     }
 

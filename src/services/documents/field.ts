@@ -1,23 +1,23 @@
-import { Document } from "@db-diagram/@gen/document/types_generated";
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { ReferenceField, UtilizedField } from "@db-diagram/services/documents/types";
 
 export interface Field {
 
     // More comment see `resources/flatbuffer/document.fbs`
-    id: string;
+    id?: string;
     name: string;
-    type: Document.DataType;
+    type: binary.DataType;
     size?: number;
     digit?: number;
     fpoint?: number;
     items?: string[];
-    kind: Document.FieldKind;
-    key: boolean;
+    kind?: binary.FieldKind;
+    key?: boolean;
     utilizeds?: UtilizedField[];
     reference?: ReferenceField;
-    order: number;
-    createdAt: number;
-    lastUpdateAt: number;
+    order?: number;
+    createdAt?: number;
+    lastUpdateAt?: number;
 
     // use for unique index only.
     database: string;

@@ -1,3 +1,4 @@
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { Base } from "@db-diagram/elements/base";
 import { Diagram } from "@db-diagram/elements/diagram";
 import { Relation } from "@db-diagram/elements/relation";
@@ -10,32 +11,36 @@ import {
    TableAttribute,
    TextAttribute,
 } from "@db-diagram/elements/utils/attributes";
-import { fieldOptionEqual, FieldOptions, TableOptions } from "@db-diagram/elements/utils/options";
-import { Box, DataType, FieldCoordinate, Point, Size, TableMetadata } from "@db-diagram/elements/utils/types";
+import { Box } from "@db-diagram/elements/utils/box";
+import { Field } from "@db-diagram/services/documents/field";
+import { Table } from "@db-diagram/services/documents/table";
+import { FieldCoordinate, Point, Size } from "@db-diagram/services/documents/types";
 import { Visualization } from "@db-diagram/shares/elements";
 
 /**
  * Object represent table field element.
  */
 interface FieldUI {
-   fieldOptions: FieldOptions;
    icon?: SVGUseElement;
    name: SVGTextElement;
    type: SVGTextElement;
    mark?: SVGUseElement;
    fieldGroup: SVGGElement;
    relation?: Relation[];
+
+   // keep some data from Field object
+   field: Field;
 }
 
 /**
  * Element diagram represent database table.
  */
-export class Table extends UIElement<SVGGElement, GlobalAttribute> {
+export class TableGraph extends UIElement<SVGGElement, GlobalAttribute> {
 
    private static readonly roundCorner = 6;
 
    // create field table element.
-   private static createField(table: Table, options: FieldOptions): FieldUI {
+   private static createField(table: TableGraph, field: Field): FieldUI {
       const visual = table.parent!.visualization;
       const icons = visual.getIconsDts();
       const styles = visual.getStylesDts();
@@ -43,14 +48,14 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       const rowHeight = visual.tableFieldHeight;
       const half = rowHeight / 2;
-      const nameBox = visual.getTableTextFieldVariableSize(options);
-      const typeBox = visual.getTableTextFieldTypeSize(options);
+      const nameBox = visual.getTableTextFieldVariableSize(field);
+      const typeBox = visual.getTableTextFieldTypeSize(field);
       const fieldWidth = Math.max(table.size.width, visual.tableFieldIconWidth +
          nameBox.width + typeBox.width + padding.left + padding.right + Visualization.FieldNameTypeSpacing);
 
       const fieldUi = {
+         field,
          fieldGroup: Base.createElement("g"),
-         fieldOptions: options,
          name: applyAttribute(Base.createElement("text"), {
             alignmentBaseline: "middle",
             class: styles.fieldTextName,
@@ -69,18 +74,18 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          } as TextAttribute),
       } as FieldUI;
 
-      if (options.primary || options.unique || options.foreign) {
+      if (field.key) {
          let size: Box;
          let clazz: string;
-         if (options.primary) {
+         if (field.kind === binary.FieldKind.Primary) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.primaryKeyIcon);
             size = visual.getIconsElementSize(icons.primaryKeyIcon);
             clazz = styles.primary;
-         } else if (options.unique) {
+         } else if (field.kind === binary.FieldKind.Unique) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.uniqueKeyIcon);
             size = visual.getIconsElementSize(icons.uniqueKeyIcon);
             clazz = styles.unique;
-         } else if (options.foreign) {
+         } else if (field.kind === binary.FieldKind.Foriegn) {
             fieldUi.icon = Visualization.createReferencePathIcon(icons.foriegnKeyIcon);
             size = visual.getIconsElementSize(icons.foriegnKeyIcon);
             clazz = styles.foreign;
@@ -97,7 +102,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       fieldUi.fieldGroup.appendChild(fieldUi.name);
       fieldUi.fieldGroup.appendChild(fieldUi.type);
 
-      if (options.type === DataType.Enum) {
+      if (field.type === binary.DataType.Enum) {
          fieldUi.mark = Base.createElement("use");
          fieldUi.fieldGroup.appendChild(fieldUi.mark);
       }
@@ -116,9 +121,9 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const x = 0;
       const y = 0;
       const hy = y + headerHeight;
-      const rp = y + Table.roundCorner;
-      const vx = x + size.width - Table.roundCorner;
-      const rxl = x + Table.roundCorner;
+      const rp = y + TableGraph.roundCorner;
+      const vx = x + size.width - TableGraph.roundCorner;
+      const rxl = x + TableGraph.roundCorner;
       const rxr = x + size.width;
       return `M${x},${hy} V${rp} Q${x},${y} ${rxl},${y} H${vx} Q${rxr},${y} ${rxr},${rp} V${hy} H${x}Z`;
    }
@@ -128,10 +133,10 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       const x = 0;
       const ty = headerHeight;
       const y = size.height - footerHeight;
-      const hy = y + footerHeight - Table.roundCorner;
-      const rp = hy + Table.roundCorner;
-      const vx = x + size.width - Table.roundCorner;
-      const rxl = x + Table.roundCorner;
+      const hy = y + footerHeight - TableGraph.roundCorner;
+      const rp = hy + TableGraph.roundCorner;
+      const vx = x + size.width - TableGraph.roundCorner;
+      const rxl = x + TableGraph.roundCorner;
       const rxr = x + size.width;
       return `M${x},${ty} V${hy} Q${x},${rp} ${rxl},${rp} H${vx} Q${rxr},${rp} ${rxr},${hy}` +
          ` V${ty} H${rxr} V${y} H${(x + iconWidth + 1)} V${ty} H${(x + iconWidth)} V${y} H${x} V${ty} H${x}Z`;
@@ -146,16 +151,13 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
    private fieldsUi: FieldUI[] = [];
 
    private size: Size;
-
-   private tableOptions: TableOptions;
-
    private parent?: Diagram;
 
    /**
     * Return table name.
     */
    public get name(): string {
-      return this.tableOptions.name;
+      return this.tableTitle.textContent!;
    }
 
    /**
@@ -165,9 +167,8 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       return this.fieldsUi.length;
    }
 
-   constructor(parent: Diagram, options: TableOptions, attr?: GlobalAttribute) {
-      super(Base.createElement("g"), Object.assign({ "data-name": options.name } as TableAttribute, attr));
-      this.tableOptions = options;
+   constructor(parent: Diagram, table: Table, attr?: GlobalAttribute) {
+      super(Base.createElement("g"), Object.assign({ "data-name": table.name } as TableAttribute, attr));
       this.parent = parent;
 
       const visual = parent.visualization;
@@ -182,8 +183,8 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
       this.tableBg = this.wrapped.appendChild(applyAttribute(Base.createElement("rect"), {
          class: styles.tableBackground,
          height: size.height,
-         rx: Table.roundCorner,
-         ry: Table.roundCorner,
+         rx: TableGraph.roundCorner,
+         ry: TableGraph.roundCorner,
          width: size.width,
       } as RectAttribute));
 
@@ -193,17 +194,17 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       this.header = this.wrapped.appendChild(applyAttribute(Base.createElement("path"), {
          class: `${styles.header}`,
-         d: Table.createHeaderPath(size, visual.tableHeaderHeight),
+         d: TableGraph.createHeaderPath(size, visual.tableHeaderHeight),
       } as PathAttribute));
 
       this.footer = this.wrapped.appendChild(applyAttribute(Base.createElement("path"), {
          class: `${styles.footer}`,
-         d: Table.createFooterPath(
+         d: TableGraph.createFooterPath(
             size, visual.tableFieldIconWidth, visual.tableHeaderHeight, visual.tableFooterHeight),
       } as PathAttribute));
 
       this.tableTitle = this.wrapped.appendChild(Base.createElement("text"));
-      this.tableTitle.textContent = options.name;
+      this.tableTitle.textContent = table.name;
       let txtLeft = (2 * padding.left) + visual.getIconsElementSize(icons.tableIcon).width;
       let txtTop = (visual.tableHeaderHeight / 2) + 1;
       applyAttribute(this.tableTitle, {
@@ -218,9 +219,9 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
          transform: `translate(${padding.left}, ${(visual.tableHeaderHeight - iconHeight) / 2})`,
       } as PathAttribute));
 
-      if (options.engine) {
+      if (table.engine) {
          this.tableEngine = this.wrapped.appendChild(Base.createElement("text"));
-         this.tableEngine.textContent = options.engine!;
+         this.tableEngine.textContent = table.engine!;
          txtLeft = padding.left;
          txtTop = size.height - (visual.tableFooterHeight / 2) + 1;
          applyAttribute(this.tableEngine, {
@@ -252,27 +253,8 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * remove itself from the diagram
     */
    public detach(): this {
-      this.parent!.table(this.tableOptions, true);
+      this.parent!.table(this.name, true);
       return super.detach();
-   }
-
-   /**
-    * Return table metadata.
-    */
-   public metadata(): TableMetadata {
-      const tm = {
-         additional: this.tableOptions.additional,
-         engine: this.tableOptions.engine,
-         name: this.name,
-      } as TableMetadata;
-
-      if (this.fieldsUi && this.fieldsUi.length > 0) {
-         tm.fields = [];
-         this.fieldsUi.forEach((fieldUi) => {
-            tm.fields!.push(Object.assign({}, fieldUi.fieldOptions));
-         });
-      }
-      return tm;
    }
 
    /**
@@ -281,7 +263,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     */
    public primaryRelation(relation: Relation): this {
       for (const fieldUI of this.fieldsUi) {
-         if (fieldUI.fieldOptions.primary) {
+         if (fieldUI.field.kind === binary.FieldKind.Primary) {
             if (!fieldUI.relation) {
                fieldUI.relation = [];
             }
@@ -298,9 +280,11 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Add foriegn relationship.
     * @param relation relationship object.
     */
-   public foriegnRelation(relation: Relation, field: FieldOptions): this {
+   public foriegnRelation(relation: Relation, field: Field): this {
       for (const fieldUI of this.fieldsUi) {
-         if (fieldUI.fieldOptions.foreign && fieldUI.fieldOptions === field) {
+         if (fieldUI.field.kind === binary.FieldKind.Foriegn &&
+            fieldUI.field.name === field.name &&
+            fieldUI.field.type === field.type) {
             if (!fieldUI.relation) {
                fieldUI.relation = [];
             }
@@ -317,17 +301,17 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Get field option.
     * @param index field index.
     */
-   public field(index: number): FieldOptions {
-      return this.fieldsUi[index].fieldOptions;
+   public field(index: number): Field {
+      return this.fieldsUi[index].field;
    }
 
    /**
     * Get field index.
     * @param field field option.
     */
-   public fieldIndex(field: FieldOptions): number {
-      for (let i = 0; i < this.fieldsUi.length; i++) {
-         if (fieldOptionEqual(this.fieldsUi[i].fieldOptions, field)) {
+   public fieldIndex(field: Field): number {
+      for (const [i, fieldUI] of this.fieldsUi.entries()) {
+         if (fieldUI.field.name === field.name && fieldUI.field.type === field.type) {
             return i;
          }
       }
@@ -337,11 +321,11 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
    /**
     * Get primary field optoins.
     */
-   public primaryField(): FieldOptions {
-      let field: FieldOptions | undefined;
+   public primaryField(): Field {
+      let field: Field | undefined;
       for (const fieldUI of this.fieldsUi) {
-         if (fieldUI.fieldOptions.primary) {
-            field = fieldUI.fieldOptions;
+         if (fieldUI.field.kind === binary.FieldKind.Primary) {
+            field = fieldUI.field;
             break;
          }
       }
@@ -356,7 +340,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
    public primaryFieldCoordinate(): FieldCoordinate {
       let primaryIndex = -1;
       for (let i = 0; i < this.fieldsUi.length; i++) {
-         if (this.fieldsUi[i].fieldOptions.primary) {
+         if (this.fieldsUi[i].field.kind === binary.FieldKind.Primary) {
             primaryIndex = i;
             break;
          }
@@ -394,16 +378,16 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * @param options field options.
     * @param index index of the field.
     */
-   public addField(options: FieldOptions, index?: number): number {
-      options.typeRaw = `${DataType[options.type].toLowerCase()}`;
-      if (options.typeSize && options.typeSize > 0) {
-         options.typeRaw += `(${options.typeSize})`;
+   public addField(field: Field, index?: number): number {
+      let typeRaw = `${binary.DataType[field.type].toUpperCase()}`;
+      if (field.size && field.size > 0) {
+         typeRaw += `(${field.size})`;
       }
 
-      const fieldUi = Table.createField(this, options);
+      const fieldUi = TableGraph.createField(this, field);
 
-      fieldUi.name.textContent = options.name;
-      fieldUi.type.textContent = options.typeRaw!;
+      fieldUi.name.textContent = field.name;
+      fieldUi.type.textContent = typeRaw!;
 
       this.wrapped.appendChild(fieldUi.fieldGroup);
 
@@ -420,7 +404,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Remove field from table.
     * @param index field index
     */
-   public removeField(index: number): FieldOptions {
+   public removeField(index: number): Field {
       if (index < this.fieldsUi.length) {
          const fieldUi = Object.assign({}, this.fieldsUi[index]);
          this.fieldsUi.splice(index, 1);
@@ -443,7 +427,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
          this.onSizeChange(mW, rowY + visual.tableFooterHeight + (4 + space));
 
-         return fieldUi.fieldOptions;
+         return fieldUi.field;
       }
       throw new Error("Index not exist");
    }
@@ -497,7 +481,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Call whenn a drag event is detected.
     */
    protected onDragStart() {
-      if (!this.tableOptions.showRelationOnDrag) {
+      if (!this.parent!.preference.table.showRelationWhileDrag) {
          this.relationVisibility(false);
       }
    }
@@ -506,7 +490,7 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
     * Call when a drag event is aborted.
     */
    protected onDragAbort() {
-      if (!this.tableOptions.showRelationOnDrag) {
+      if (!this.parent!.preference.table.showRelationWhileDrag) {
          this.relationVisibility(true);
       }
    }
@@ -566,12 +550,12 @@ export class Table extends UIElement<SVGGElement, GlobalAttribute> {
 
       if (updateHeader) {
          applyAttribute(this.header, {
-            d: Table.createHeaderPath(this.size, visual.tableHeaderHeight),
+            d: TableGraph.createHeaderPath(this.size, visual.tableHeaderHeight),
          });
       }
       if (updateFooter) {
          applyAttribute(this.footer, {
-            d: Table.createFooterPath(
+            d: TableGraph.createFooterPath(
                this.size, visual.tableFieldIconWidth, visual.tableHeaderHeight, visual.tableFooterHeight),
          });
          if (this.tableEngine) {

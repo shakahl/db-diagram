@@ -2,8 +2,7 @@ import { DiagramFixtures, loadTableFixture } from "@db-diagram/tests/helpers/hel
 import { getElementCoordinate } from "@db-diagram/tests/helpers/svg";
 
 import { Relation } from "@db-diagram/elements/relation";
-import { Table } from "@db-diagram/elements/table";
-import { RelationshipOptions } from "@db-diagram/elements/utils/options";
+import { TableGraph } from "@db-diagram/elements/table";
 import { onDomReady, Visualization } from "@db-diagram/shares/elements";
 
 const shareUI = Visualization.getInstance();
@@ -20,7 +19,7 @@ enum Side {
     OVERLAP_BOTTOM = 6,
 }
 
-const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table, side: Side) => {
+const verifyCoordinate = (relation: Relation, primaryTb: TableGraph, foreignTb: TableGraph, side: Side) => {
     const primaryCoord = primaryTb.primaryFieldCoordinate();
     const foreignCoord = foreignTb.fieldCoordinate(foreignTb.fieldCount - 1);
     const box = relation.native.getBBox();
@@ -29,31 +28,31 @@ const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table
 
     switch (side) {
         case Side.MID_MANY_BOTTOM_RIGHT:
-            expect(primaryCoord.right.x).toEqual(box.x);
-            expect(primaryCoord.right.y).toEqual(box.y + halfOne);
+            expect(primaryCoord.right.x).toBeCloseTo(box.x);
+            expect(primaryCoord.right.y).toBeCloseTo(box.y + halfOne);
             expect(foreignCoord.left.x).toBeCloseTo(box.x + box.width);
             expect(foreignCoord.left.y).toBeCloseTo(box.y + box.height - halfMany);
             break;
 
         case Side.MID_MANY_BOTTOM_LEFT:
-            expect(primaryCoord.left.x).toEqual(box.x + box.width);
-            expect(primaryCoord.left.y).toEqual(box.y + halfOne);
-            expect(foreignCoord.right.x).toEqual(box.x);
+            expect(primaryCoord.left.x).toBeCloseTo(box.x + box.width);
+            expect(primaryCoord.left.y).toBeCloseTo(box.y + halfOne);
+            expect(foreignCoord.right.x).toBeCloseTo(box.x);
             expect(foreignCoord.right.y).toBeCloseTo(box.y + box.height - halfMany);
             break;
 
         case Side.MID_MANY_TOP_LEFT:
-            expect(primaryCoord.left.x).toEqual(box.x + box.width);
+            expect(primaryCoord.left.x).toBeCloseTo(box.x + box.width);
             expect(primaryCoord.left.y).toBeCloseTo(box.y + box.height - halfOne);
-            expect(foreignCoord.right.x).toEqual(box.x);
-            expect(foreignCoord.right.y).toEqual(box.y + halfMany);
+            expect(foreignCoord.right.x).toBeCloseTo(box.x);
+            expect(foreignCoord.right.y).toBeCloseTo(box.y + halfMany);
             break;
 
         case Side.MID_MANY_TOP_RIGHT:
-            expect(primaryCoord.right.x).toEqual(box.x);
+            expect(primaryCoord.right.x).toBeCloseTo(box.x);
             expect(primaryCoord.right.y).toBeCloseTo(box.y + box.height - halfOne);
             expect(foreignCoord.left.x).toBeCloseTo(box.x + box.width);
-            expect(foreignCoord.left.y).toEqual(box.y + halfMany);
+            expect(foreignCoord.left.y).toBeCloseTo(box.y + halfMany);
             break;
 
         case Side.OVERLAP_TOP:
@@ -63,10 +62,10 @@ const verifyCoordinate = (relation: Relation, primaryTb: Table, foreignTb: Table
             expect(oneBox).toBeTruthy();
             expect(manyBox).toBeTruthy();
 
-            expect(primaryCoord.left.x).toEqual(oneBox!.x + oneBox!.width);
-            expect(primaryCoord.left.y).toEqual(oneBox!.y + halfOne);
-            expect(foreignCoord.left.x).toEqual(manyBox!.x + manyBox!.width);
-            expect(foreignCoord.left.y).toEqual(manyBox!.y + halfMany);
+            expect(primaryCoord.left.x).toBeCloseTo(oneBox!.x + oneBox!.width);
+            expect(primaryCoord.left.y).toBeCloseTo(oneBox!.y + halfOne);
+            expect(foreignCoord.left.x).toBeCloseTo(manyBox!.x + manyBox!.width);
+            expect(foreignCoord.left.y).toBeCloseTo(manyBox!.y + halfMany);
 
             const width = Math.abs(primaryCoord.left.x - foreignCoord.left.x);
             const height = Math.abs(primaryCoord.left.y - foreignCoord.left.y) + halfMany + halfOne;
@@ -91,23 +90,24 @@ describe("Relation Action", () => {
     });
 
     it("Coordinate", () => {
-        const opts: RelationshipOptions[] = [{
-            foreignTable: inspectDiagram.tables![1].table,
-            line: true,
-            primaryTable: inspectDiagram.tables![0].table,
+        const rs = [{
+            ftb: inspectDiagram.tables![1].tableGraph,
+            ptb: inspectDiagram.tables![0].tableGraph,
+            useLine: true,
         }, {
-            foreignTable: inspectDiagram.tables![1].table,
-            line: false,
-            primaryTable: inspectDiagram.tables![2].table,
+            ftb: inspectDiagram.tables![1].tableGraph,
+            ptb: inspectDiagram.tables![2].tableGraph,
+            useLine: false,
         }];
 
-        opts.forEach((opt) => {
-            const relation = new Relation(inspectDiagram.diagram, opt);
-            const primaryTable = opt.primaryTable;
-            const foreignTable = opt.foreignTable;
+        rs.forEach((it) => {
+            inspectDiagram.diagram.preference.relationship.useStraightLine = it.useLine;
+            const relation = new Relation(inspectDiagram.diagram, it.ptb, it.ftb);
+            const primaryTable = it.ptb;
+            const foreignTable = it.ftb;
 
             primaryTable.x(100).y(50);
-            foreignTable.x(300).y(120);
+            foreignTable.x(400).y(120);
             verifyCoordinate(relation, primaryTable, foreignTable, Side.MID_MANY_BOTTOM_RIGHT);
 
             primaryTable.x(300).y(20);

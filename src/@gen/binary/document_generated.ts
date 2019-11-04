@@ -4,7 +4,7 @@ import * as NS8382949480189395168 from "./types_generated";
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class Point {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -52,7 +52,7 @@ static createPoint(builder:flatbuffers.Builder, x: number, y: number):flatbuffer
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class Matrix {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -136,7 +136,7 @@ static createMatrix(builder:flatbuffers.Builder, a: number, b: number, c: number
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class Database {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -171,12 +171,14 @@ static getSizePrefixedRootAsDatabase(bb:flatbuffers.ByteBuffer, obj?:Database):D
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-id(obj?:Document.ID):Document.ID|null {
+id():string|null
+id(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+id(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
@@ -202,21 +204,21 @@ engine(optionalEncoding?:any):string|Uint8Array|null {
 };
 
 /**
- * @returns Document.DatabaseType
+ * @returns binary.DatabaseType
  */
-type():NS8382949480189395168.Document.DatabaseType {
+type():NS8382949480189395168.binary.DatabaseType {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.Document.DatabaseType.RDMS;
+  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.binary.DatabaseType.RDMS;
 };
 
 /**
  * @param number index
- * @param Document.Table= obj
- * @returns Document.Table
+ * @param binary.Table= obj
+ * @returns binary.Table
  */
-tables(index: number, obj?:Document.Table):Document.Table|null {
+tables(index: number, obj?:binary.Table):binary.Table|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
-  return offset ? (obj || new Document.Table).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new binary.Table).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -228,12 +230,12 @@ tablesLength():number {
 };
 
 /**
- * @param Document.Matrix= obj
- * @returns Document.Matrix|null
+ * @param binary.Matrix= obj
+ * @returns binary.Matrix|null
  */
-matrix(obj?:Document.Matrix):Document.Matrix|null {
+matrix(obj?:binary.Matrix):binary.Matrix|null {
   var offset = this.bb!.__offset(this.bb_pos, 14);
-  return offset ? (obj || new Document.Matrix).__init(this.bb_pos + offset, this.bb!) : null;
+  return offset ? (obj || new binary.Matrix).__init(this.bb_pos + offset, this.bb!) : null;
 };
 
 /**
@@ -285,10 +287,10 @@ static addEngine(builder:flatbuffers.Builder, engineOffset:flatbuffers.Offset) {
 
 /**
  * @param flatbuffers.Builder builder
- * @param Document.DatabaseType type
+ * @param binary.DatabaseType type
  */
-static addType(builder:flatbuffers.Builder, type:NS8382949480189395168.Document.DatabaseType) {
-  builder.addFieldInt8(3, type, NS8382949480189395168.Document.DatabaseType.RDMS);
+static addType(builder:flatbuffers.Builder, type:NS8382949480189395168.binary.DatabaseType) {
+  builder.addFieldInt8(3, type, NS8382949480189395168.binary.DatabaseType.RDMS);
 };
 
 /**
@@ -371,7 +373,7 @@ static finishSizePrefixedDatabaseBuffer(builder:flatbuffers.Builder, offset:flat
   builder.finish(offset, undefined);
 };
 
-static createDatabase(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nameOffset:flatbuffers.Offset, engineOffset:flatbuffers.Offset, type:NS8382949480189395168.Document.DatabaseType, tablesOffset:flatbuffers.Offset, matrixOffset:flatbuffers.Offset, createdAt:flatbuffers.Long, lastUpdateAt:flatbuffers.Long):flatbuffers.Offset {
+static createDatabase(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nameOffset:flatbuffers.Offset, engineOffset:flatbuffers.Offset, type:NS8382949480189395168.binary.DatabaseType, tablesOffset:flatbuffers.Offset, matrixOffset:flatbuffers.Offset, createdAt:flatbuffers.Long, lastUpdateAt:flatbuffers.Long):flatbuffers.Offset {
   Database.startDatabase(builder);
   Database.addId(builder, idOffset);
   Database.addName(builder, nameOffset);
@@ -388,7 +390,7 @@ static createDatabase(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, 
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class Table {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -423,12 +425,14 @@ static getSizePrefixedRootAsTable(bb:flatbuffers.ByteBuffer, obj?:Table):Table {
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-id(obj?:Document.ID):Document.ID|null {
+id():string|null
+id(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+id(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
@@ -444,12 +448,12 @@ name(optionalEncoding?:any):string|Uint8Array|null {
 
 /**
  * @param number index
- * @param Document.Field= obj
- * @returns Document.Field
+ * @param binary.Field= obj
+ * @returns binary.Field
  */
-fields(index: number, obj?:Document.Field):Document.Field|null {
+fields(index: number, obj?:binary.Field):binary.Field|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? (obj || new Document.Field).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new binary.Field).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -462,12 +466,14 @@ fieldsLength():number {
 
 /**
  * @param number index
- * @param Document.ID= obj
- * @returns Document.ID
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array
  */
-primaries(index: number, obj?:Document.ID):Document.ID|null {
+primaries(index: number):string
+primaries(index: number,optionalEncoding:flatbuffers.Encoding):string|Uint8Array
+primaries(index: number,optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb!.__vector(this.bb_pos + offset) + index * 4, optionalEncoding) : null;
 };
 
 /**
@@ -480,12 +486,12 @@ primariesLength():number {
 
 /**
  * @param number index
- * @param Document.KeyGroup= obj
- * @returns Document.KeyGroup
+ * @param binary.KeyGroup= obj
+ * @returns binary.KeyGroup
  */
-uniques(index: number, obj?:Document.KeyGroup):Document.KeyGroup|null {
+uniques(index: number, obj?:binary.KeyGroup):binary.KeyGroup|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
-  return offset ? (obj || new Document.KeyGroup).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new binary.KeyGroup).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -498,12 +504,12 @@ uniquesLength():number {
 
 /**
  * @param number index
- * @param Document.KeyGroup= obj
- * @returns Document.KeyGroup
+ * @param binary.KeyGroup= obj
+ * @returns binary.KeyGroup
  */
-foriegns(index: number, obj?:Document.KeyGroup):Document.KeyGroup|null {
+foriegns(index: number, obj?:binary.KeyGroup):binary.KeyGroup|null {
   var offset = this.bb!.__offset(this.bb_pos, 14);
-  return offset ? (obj || new Document.KeyGroup).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new binary.KeyGroup).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -515,12 +521,12 @@ foriegnsLength():number {
 };
 
 /**
- * @param Document.Point= obj
- * @returns Document.Point|null
+ * @param binary.Point= obj
+ * @returns binary.Point|null
  */
-position(obj?:Document.Point):Document.Point|null {
+position(obj?:binary.Point):binary.Point|null {
   var offset = this.bb!.__offset(this.bb_pos, 16);
-  return offset ? (obj || new Document.Point).__init(this.bb_pos + offset, this.bb!) : null;
+  return offset ? (obj || new binary.Point).__init(this.bb_pos + offset, this.bb!) : null;
 };
 
 /**
@@ -731,122 +737,7 @@ static createTable(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nam
 /**
  * @constructor
  */
-export namespace Document{
-export class ID {
-  bb: flatbuffers.ByteBuffer|null = null;
-
-  bb_pos:number = 0;
-/**
- * @param number i
- * @param flatbuffers.ByteBuffer bb
- * @returns ID
- */
-__init(i:number, bb:flatbuffers.ByteBuffer):ID {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param ID= obj
- * @returns ID
- */
-static getRootAsID(bb:flatbuffers.ByteBuffer, obj?:ID):ID {
-  return (obj || new ID).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param flatbuffers.ByteBuffer bb
- * @param ID= obj
- * @returns ID
- */
-static getSizePrefixedRootAsID(bb:flatbuffers.ByteBuffer, obj?:ID):ID {
-  return (obj || new ID).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param number index
- * @returns number
- */
-id(index: number):number|null {
-  var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index) : 0;
-};
-
-/**
- * @returns number
- */
-idLength():number {
-  var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
-};
-
-/**
- * @returns Uint8Array
- */
-idArray():Uint8Array|null {
-  var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
-};
-
-/**
- * @param flatbuffers.Builder builder
- */
-static startID(builder:flatbuffers.Builder) {
-  builder.startObject(1);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param flatbuffers.Offset idOffset
- */
-static addId(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(0, idOffset, 0);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param Array.<number> data
- * @returns flatbuffers.Offset
- */
-static createIdVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(1, data.length, 1);
-  for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt8(data[i]);
-  }
-  return builder.endVector();
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number numElems
- */
-static startIdVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(1, numElems, 1);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @returns flatbuffers.Offset
- */
-static endID(builder:flatbuffers.Builder):flatbuffers.Offset {
-  var offset = builder.endObject();
-  builder.requiredField(offset, 4); // id
-  return offset;
-};
-
-static createID(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset):flatbuffers.Offset {
-  ID.startID(builder);
-  ID.addId(builder, idOffset);
-  return ID.endID(builder);
-}
-}
-}
-/**
- * @constructor
- */
-export namespace Document{
+export namespace binary{
 export class KeyGroup {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -882,12 +773,14 @@ static getSizePrefixedRootAsKeyGroup(bb:flatbuffers.ByteBuffer, obj?:KeyGroup):K
 
 /**
  * @param number index
- * @param Document.ID= obj
- * @returns Document.ID
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array
  */
-ids(index: number, obj?:Document.ID):Document.ID|null {
+ids(index: number):string
+ids(index: number,optionalEncoding:flatbuffers.Encoding):string|Uint8Array
+ids(index: number,optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb!.__vector(this.bb_pos + offset) + index * 4, optionalEncoding) : null;
 };
 
 /**
@@ -899,12 +792,14 @@ idsLength():number {
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-key(obj?:Document.ID):Document.ID|null {
+key():string|null
+key(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+key(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
@@ -971,7 +866,7 @@ static createKeyGroup(builder:flatbuffers.Builder, idsOffset:flatbuffers.Offset,
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class Field {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -1006,12 +901,14 @@ static getSizePrefixedRootAsField(bb:flatbuffers.ByteBuffer, obj?:Field):Field {
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-id(obj?:Document.ID):Document.ID|null {
+id():string|null
+id(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+id(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
@@ -1026,11 +923,11 @@ name(optionalEncoding?:any):string|Uint8Array|null {
 };
 
 /**
- * @returns Document.DataType
+ * @returns binary.DataType
  */
-type():NS8382949480189395168.Document.DataType {
+type():NS8382949480189395168.binary.DataType {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.Document.DataType.Unknown;
+  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.binary.DataType.Unknown;
 };
 
 /**
@@ -1078,11 +975,11 @@ itemsLength():number {
 };
 
 /**
- * @returns Document.FieldKind
+ * @returns binary.FieldKind
  */
-kind():NS8382949480189395168.Document.FieldKind {
+kind():NS8382949480189395168.binary.FieldKind {
   var offset = this.bb!.__offset(this.bb_pos, 18);
-  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.Document.FieldKind.Normal;
+  return offset ? /**  */ (this.bb!.readUint8(this.bb_pos + offset)) : NS8382949480189395168.binary.FieldKind.Normal;
 };
 
 /**
@@ -1095,12 +992,12 @@ key():boolean {
 
 /**
  * @param number index
- * @param Document.UtilizedField= obj
- * @returns Document.UtilizedField
+ * @param binary.UtilizedField= obj
+ * @returns binary.UtilizedField
  */
-utilizeds(index: number, obj?:Document.UtilizedField):Document.UtilizedField|null {
+utilizeds(index: number, obj?:binary.UtilizedField):binary.UtilizedField|null {
   var offset = this.bb!.__offset(this.bb_pos, 22);
-  return offset ? (obj || new Document.UtilizedField).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+  return offset ? (obj || new binary.UtilizedField).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 };
 
 /**
@@ -1112,12 +1009,12 @@ utilizedsLength():number {
 };
 
 /**
- * @param Document.ReferenceField= obj
- * @returns Document.ReferenceField|null
+ * @param binary.ReferenceField= obj
+ * @returns binary.ReferenceField|null
  */
-reference(obj?:Document.ReferenceField):Document.ReferenceField|null {
+reference(obj?:binary.ReferenceField):binary.ReferenceField|null {
   var offset = this.bb!.__offset(this.bb_pos, 24);
-  return offset ? (obj || new Document.ReferenceField).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? (obj || new binary.ReferenceField).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 };
 
 /**
@@ -1169,10 +1066,10 @@ static addName(builder:flatbuffers.Builder, nameOffset:flatbuffers.Offset) {
 
 /**
  * @param flatbuffers.Builder builder
- * @param Document.DataType type
+ * @param binary.DataType type
  */
-static addType(builder:flatbuffers.Builder, type:NS8382949480189395168.Document.DataType) {
-  builder.addFieldInt8(2, type, NS8382949480189395168.Document.DataType.Unknown);
+static addType(builder:flatbuffers.Builder, type:NS8382949480189395168.binary.DataType) {
+  builder.addFieldInt8(2, type, NS8382949480189395168.binary.DataType.Unknown);
 };
 
 /**
@@ -1230,10 +1127,10 @@ static startItemsVector(builder:flatbuffers.Builder, numElems:number) {
 
 /**
  * @param flatbuffers.Builder builder
- * @param Document.FieldKind kind
+ * @param binary.FieldKind kind
  */
-static addKind(builder:flatbuffers.Builder, kind:NS8382949480189395168.Document.FieldKind) {
-  builder.addFieldInt8(7, kind, NS8382949480189395168.Document.FieldKind.Normal);
+static addKind(builder:flatbuffers.Builder, kind:NS8382949480189395168.binary.FieldKind) {
+  builder.addFieldInt8(7, kind, NS8382949480189395168.binary.FieldKind.Normal);
 };
 
 /**
@@ -1316,7 +1213,7 @@ static endField(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createField(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nameOffset:flatbuffers.Offset, type:NS8382949480189395168.Document.DataType, size:number, digit:number, fpoint:number, itemsOffset:flatbuffers.Offset, kind:NS8382949480189395168.Document.FieldKind, key:boolean, utilizedsOffset:flatbuffers.Offset, referenceOffset:flatbuffers.Offset, order:number, createdAt:flatbuffers.Long, lastUpdateAt:flatbuffers.Long):flatbuffers.Offset {
+static createField(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nameOffset:flatbuffers.Offset, type:NS8382949480189395168.binary.DataType, size:number, digit:number, fpoint:number, itemsOffset:flatbuffers.Offset, kind:NS8382949480189395168.binary.FieldKind, key:boolean, utilizedsOffset:flatbuffers.Offset, referenceOffset:flatbuffers.Offset, order:number, createdAt:flatbuffers.Long, lastUpdateAt:flatbuffers.Long):flatbuffers.Offset {
   Field.startField(builder);
   Field.addId(builder, idOffset);
   Field.addName(builder, nameOffset);
@@ -1339,7 +1236,7 @@ static createField(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, nam
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class ReferenceField {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -1374,21 +1271,25 @@ static getSizePrefixedRootAsReferenceField(bb:flatbuffers.ByteBuffer, obj?:Refer
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-origin(obj?:Document.ID):Document.ID|null {
+origin():string|null
+origin(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+origin(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-source(obj?:Document.ID):Document.ID|null {
+source():string|null
+source(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+source(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
@@ -1468,7 +1369,7 @@ static createReferenceField(builder:flatbuffers.Builder, originOffset:flatbuffer
 /**
  * @constructor
  */
-export namespace Document{
+export namespace binary{
 export class UtilizedField {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -1503,21 +1404,25 @@ static getSizePrefixedRootAsUtilizedField(bb:flatbuffers.ByteBuffer, obj?:Utiliz
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-target(obj?:Document.ID):Document.ID|null {
+target():string|null
+target(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+target(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**
- * @param Document.ID= obj
- * @returns Document.ID|null
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
  */
-destination(obj?:Document.ID):Document.ID|null {
+destination():string|null
+destination(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+destination(optionalEncoding?:any):string|Uint8Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? (obj || new Document.ID).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
 
 /**

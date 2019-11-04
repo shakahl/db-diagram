@@ -1,4 +1,4 @@
-namespace Document;
+namespace binary;
 
 enum DataType : ubyte {
   Unknown = 0,
@@ -51,4 +51,20 @@ enum FieldKind : ubyte {
   Primary = 1,
   Unique = 2,
   Foriegn = 3,
+}
+
+enum DatabaseEngine : ubyte {
+  Unknown = 0,
+  MySQL = 1,
+  MariaDB = 2,
+  Oracle = 3,
+  MSSQL = 4,
+  MongoDB = 5,
+  SQLite = 6,
+  PostgreSQL = 7,
+  Cassandra = 8,
+  CockroachDB = 9,
+  CUBRID = 10,
+  Couchbase = 11,
+  Neo4J = 12,
 }

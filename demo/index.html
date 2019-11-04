@@ -16,31 +16,37 @@
    <script>
       const initialDiagram = (diagram, data) => {
          let tables = [];
-         data.forEach(tbOpt => {
-            const fields = tbOpt.fields;
-            delete tbOpt.fields;
-            const table = diagram.table(tbOpt);
+         data.forEach(tb => {
+            const fields = tb.fields;
+            delete tb.fields;
+            const table = diagram.table(tb);
             fields.forEach((field) => { table.addField(field) });
             tables.push(table);
          });
 
          tables[0].x(100).y(50);
-         tables[1].x(450).y(120);
+         tables[1].x(400).y(120);
          tables[2].x(50).y(320);
 
-         const relation1 = new DBDiagram.Relation(diagram, {
-            primaryTable: tables[0],
-            foreignTable: tables[1],
-            line: true,
-            weak: true
-         });
+         const pfield = tables[0].primaryField();
+         const field = {
+            database: diagram.database,
+            digit: pfield.digit,
+            fpoint: pfield.fpoint,
+            items: pfield.items,
+            key: true,
+            kind: DBDiagram.binary.FieldKind.Foriegn,
+            name: `${tables[0].name}_id`,
+            // origin and source should be fill in by data service worker.
+            // in this test origin and source does not use in Relation class.
+            reference: { origin: "--", source: "--", weak: true },
+            size: pfield.size,
+            table: tables[1].name,
+            type: pfield.type,
+         };
 
-         const relation2 = new DBDiagram.Relation(diagram, {
-            primaryTable: tables[2],
-            foreignTable: tables[1],
-            line: true,
-            weak: true
-         });
+         const relation1 = new DBDiagram.Relation(diagram, tables[0], tables[1], field);
+         const relation2 = new DBDiagram.Relation(diagram, tables[2], tables[1]);
       };
 
       DBDiagram.onDomReady(() => {

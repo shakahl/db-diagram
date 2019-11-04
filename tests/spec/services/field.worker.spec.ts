@@ -1,6 +1,6 @@
 import { Fixture, loadFixtures } from "@db-diagram/tests/helpers/karma";
 
-import { Document } from "@db-diagram/@gen/document/types_generated";
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { Field } from "@db-diagram/services/documents/field";
 import { FieldWorker } from "@db-diagram/services/field.worker";
 import { ExecStatus, StorageWorker } from "@db-diagram/services/storage.worker";
@@ -69,7 +69,7 @@ describe("Field", () => {
                 expect(results.reason).toEqual(ExecStatus.SUCCESS);
                 expect(results.data!.length).toEqual(fdmap!.size);
                 results.data!.forEach((fd) => {
-                    expect(fd).withContext(`name "${fd.name}" not matched.`).toEqual(fdmap!.get(fd.id)!);
+                    expect(fd).withContext(`name "${fd.name}" not matched.`).toEqual(fdmap!.get(fd.id!)!);
                 });
             } while (tb.done);
         } while (db.done);
@@ -89,7 +89,7 @@ describe("Field", () => {
                     fdmap = new Map<string, Field>();
                     tbmap.set(fd.table, fdmap);
                 }
-                fdmap.set(fd.id, fd);
+                fdmap.set(fd.id!, fd);
             });
         };
         computeMap(fields.data);
@@ -100,7 +100,7 @@ describe("Field", () => {
     it("create/query", async () => {
         expect(field.id).toBeTruthy();
         expect(typeof field.id).toEqual("string");
-        expect(field.id.length).toEqual(22);
+        expect(field.id!.length).toEqual(22);
 
         const results = await fieldWorker.showFields(field.database, field.table);
         expect(results).toBeTruthy();
@@ -136,8 +136,8 @@ describe("Field", () => {
             { name: "test" },
             { table: "Test" },
             { database: "DB" },
-            { type: Document.DataType.VarChar },
-            { type: Document.DataType.Enum },
+            { type: binary.DataType.VarChar },
+            { type: binary.DataType.Enum },
             { items: ["Test1", "Test2"] },
             {}];
         const expectStatus = [
@@ -190,7 +190,7 @@ describe("Field", () => {
         expect(alterResult).toBeTruthy();
         expect(alterResult.reason).toEqual(ExecStatus.SUCCESS);
 
-        const fds = await fieldWorker.getField(field.id);
+        const fds = await fieldWorker.getField(field.id!);
         expect(fds).toBeTruthy();
         expect(fds.reason).toEqual(ExecStatus.SUCCESS);
         expect(fds.data!.name).not.toEqual(field.name);

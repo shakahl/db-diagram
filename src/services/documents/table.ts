@@ -4,16 +4,18 @@ import { KeyGroup, Point } from "@db-diagram/services/documents/types";
 export interface Table {
 
     // More comment see `resources/flatbuffer/document.fbs`
-    id: string;
+    id?: string;
     name: string;
+    engine?: string;
     fields?: Field[];
     primaries?: string[];
     uniques?: KeyGroup[];
     foriegns?: KeyGroup[];
-    position: Point;
-    createdAt: number;
-    lastUpdateAt: number;
+    position?: Point;
+    createdAt?: number;
+    lastUpdateAt?: number;
 
     // use for unique index only.
     database: string;
+
 }

@@ -1,4 +1,4 @@
-import { LengthNumericType } from "@db-diagram/elements/utils/types";
+import { LengthNumericType } from "@db-diagram/services/documents/types";
 
 /**
  * provide generic attribute that support on all svg element

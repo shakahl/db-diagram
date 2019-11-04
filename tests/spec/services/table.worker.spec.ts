@@ -53,7 +53,7 @@ describe("Table worker", () => {
             expect(results.reason).toEqual(ExecStatus.SUCCESS);
             expect(results.data!.length).toEqual(tbmap!.size);
             results.data!.forEach((tb) => {
-                expect(tb).withContext(`name "${tb.name}" not matched.`).toEqual(tbmap!.get(tb.id)!);
+                expect(tb).withContext(`name "${tb.name}" not matched.`).toEqual(tbmap!.get(tb.id!)!);
             });
         } while (db.done);
     };
@@ -66,7 +66,7 @@ describe("Table worker", () => {
                 tbmap = new Map<string, Table>();
                 tbsmap.set(tb.database, tbmap);
             }
-            tbmap.set(tb.id, tb);
+            tbmap.set(tb.id!, tb);
         });
         return tbsmap;
     };
@@ -74,7 +74,7 @@ describe("Table worker", () => {
     it("create/query", async () => {
         expect(table.id).toBeTruthy();
         expect(typeof table.id).toEqual("string");
-        expect(table.id.length).toEqual(22);
+        expect(table.id!.length).toEqual(22);
 
         const results = await tableWorker.showTables(table.database);
         expect(results).toBeTruthy();
@@ -135,7 +135,7 @@ describe("Table worker", () => {
         const alterResults = await tableWorker.alterTable(results.data![0]);
         expect(alterResults.reason).toEqual(ExecStatus.SUCCESS);
 
-        const tbs = await tableWorker.getTable(table.id);
+        const tbs = await tableWorker.getTable(table.id!);
         expect(tbs).toBeTruthy();
         expect(tbs.reason).toEqual(ExecStatus.SUCCESS);
         expect(tbs.data!.name).not.toEqual(table.name);

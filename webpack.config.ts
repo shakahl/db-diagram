@@ -50,8 +50,8 @@ export default function(_: {}, argv: CommandArgument) {
             {
                test: /\.service\.worker\.ts$/,
                use: {
-                  loader: "service-worker-loader"
-               }
+                  loader: "service-worker-loader",
+               },
             },
             {
                test: /\.ts$/,
@@ -95,9 +95,9 @@ export default function(_: {}, argv: CommandArgument) {
          plugins: [pluginSvg, pluginCss],
       },
       resolveLoader: {
+         extensions: [".js", ".json", ".ts"],
          modules: ["node_modules", `${__dirname}/webpack/loaders`],
-         extensions: [".js", ".json", ".ts"]
-      }
+      },
    };
 
    return config;

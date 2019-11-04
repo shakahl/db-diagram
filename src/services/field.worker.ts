@@ -1,4 +1,4 @@
-import { Document } from "@db-diagram/@gen/document/types_generated";
+import { binary } from "@db-diagram/@gen/binary/types_generated";
 import { Field } from "@db-diagram/services/documents/field";
 import {
     ExecResult,
@@ -51,9 +51,9 @@ export class FieldWorker implements StorageDeclaration<Field> {
         if (!data.database) { return { reason: ExecStatus.DATABASE_NAME_REQUIRED }; }
         if (!data.type) { return { reason: ExecStatus.DATA_TYPE_REQUIRED }; }
         // check specific condition
-        const dt = Document.DataType;
+        const dt = binary.DataType;
         switch (data.type) {
-            case Document.DataType.Enum:
+            case binary.DataType.Enum:
                 if (!data.items) {
                     return {
                         detail: `Field ${data.name} type ${dt[data.type]} required additional items`,
@@ -63,12 +63,12 @@ export class FieldWorker implements StorageDeclaration<Field> {
                 break;
 
             // TODO: experiment, this validation may vary depend on Database Engine.
-            case Document.DataType.Float:
+            case binary.DataType.Float:
                 if (!data.fpoint && (!data.size || !data.digit)) {
                     return { reason: ExecStatus.FLOATING_POINT_REQUIRED };
                 }
-            case Document.DataType.Double:
-            case Document.DataType.Decimal:
+            case binary.DataType.Double:
+            case binary.DataType.Decimal:
                 if (data.size === undefined) {
                     return {
                         detail: `Field ${data.name} type ${dt[data.type]} required additional size`,
@@ -83,16 +83,16 @@ export class FieldWorker implements StorageDeclaration<Field> {
                 }
                 break;
 
-            case Document.DataType.UnicodeVarChar:
-            case Document.DataType.TinyInt:
-            case Document.DataType.SmallInt:
-            case Document.DataType.Medium:
-            case Document.DataType.Int:
-            case Document.DataType.BigInt:
-            case Document.DataType.Text:
-            case Document.DataType.Blob:
-            case Document.DataType.VarBinary:
-            case Document.DataType.VarChar:
+            case binary.DataType.UnicodeVarChar:
+            case binary.DataType.TinyInt:
+            case binary.DataType.SmallInt:
+            case binary.DataType.Medium:
+            case binary.DataType.Int:
+            case binary.DataType.BigInt:
+            case binary.DataType.Text:
+            case binary.DataType.Blob:
+            case binary.DataType.VarBinary:
+            case binary.DataType.VarChar:
                 if (data.size === undefined) {
                     return {
                         detail: `Field ${data.name} type ${dt[data.type]} required additional size`,
@@ -102,8 +102,8 @@ export class FieldWorker implements StorageDeclaration<Field> {
                 break;
         }
         // set default if not existed
-        if (data.kind === undefined) { data.kind = Document.FieldKind.Normal; }
-        if (!data.key) { data.key = data.kind !== Document.FieldKind.Normal; }
+        if (data.kind === undefined) { data.kind = binary.FieldKind.Normal; }
+        if (!data.key) { data.key = data.kind !== binary.FieldKind.Normal; }
         if (data.order === undefined) {
             const count = async () => {
                 const sw = await StorageWorker.getInstance();
@@ -140,7 +140,7 @@ export class FieldWorker implements StorageDeclaration<Field> {
 
     public async alterField(field: Field): Promise<ExecResult<Field>> {
         const sw = await StorageWorker.getInstance();
-        return sw.queryById<Field>(this, field.id).then((fds) => {
+        return sw.queryById<Field>(this, field.id!).then((fds) => {
             if (fds.reason !== ExecStatus.SUCCESS) {
                 return fds;
             }
@@ -170,13 +170,13 @@ export class FieldWorker implements StorageDeclaration<Field> {
                 if (fds.reason !== ExecStatus.SUCCESS) {
                     return fds;
                 }
-                return sw.delete<Field>(this, fds.data!.id).then((fdsd) => {
+                return sw.delete<Field>(this, fds.data!.id!).then((fdsd) => {
                     fdsd.data = fds.data;
                     return fdsd;
                 });
             });
         } else {
-            return sw.delete(this, (it as Field).id, true);
+            return sw.delete(this, (it as Field).id!, true);
         }
     }
 
