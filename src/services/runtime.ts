@@ -17,6 +17,9 @@ declare var __webpack_public_path__: string;
 
 const scriptUrl: string = __webpack_public_path__ + "[[script-url]]";
 
+declare var navigator: Navigator;
+if (!navigator) { navigator = window.navigator; }
+
 export class DataServiceWorker {
 
     private static dsw?: DataServiceWorker;

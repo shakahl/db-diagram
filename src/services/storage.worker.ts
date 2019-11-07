@@ -8,6 +8,9 @@ import { Database } from "@db-diagram/services/documents/database";
 import { Field } from "@db-diagram/services/documents/field";
 import { Table } from "@db-diagram/services/documents/table";
 
+declare var navigator: Navigator;
+if (!navigator) { navigator = window.navigator; }
+
 let isChrome = navigator.userAgent.indexOf("Chrome") > -1;
 const isFirefox = navigator.userAgent.indexOf("Firefox") > -1;
 let isSafari = navigator.userAgent.indexOf("Safari") > -1;
